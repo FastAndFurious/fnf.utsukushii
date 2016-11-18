@@ -5,6 +5,7 @@ import com.zuehlke.carrera.relayapi.messages.SensorEvent;
 import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
 import com.zuehlke.fnf.actorbus.ActorBusActor;
 import com.zuehlke.fnf.actorbus.Subscriptions;
+import com.zuehlke.fnf.utsukushii.model.TrackSectionType;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.PrintStream;
@@ -12,6 +13,7 @@ import java.io.PrintStream;
 public class ConsolePlotterActor extends ActorBusActor {
 
     private PrintStream out = System.out;
+    private long startTime;
 
     private ConsolePlotterActor() {
         super("ConsolePlotterActor");
@@ -23,7 +25,8 @@ public class ConsolePlotterActor extends ActorBusActor {
 
     public static Subscriptions subscriptions = Subscriptions
             .forClass(VelocityMessage.class)
-            .andForClass(SensorEvent.class);
+            .andForClass(SensorEvent.class)
+            .andForClass(TrackSectionType.class);
 
 
     @Override
@@ -34,7 +37,14 @@ public class ConsolePlotterActor extends ActorBusActor {
 
         } else if ( message instanceof VelocityMessage ) {
             handleVelocityMessage ( (VelocityMessage) message );
+
+        } else if ( message instanceof TrackSectionType ) {
+            handleTrackSectionType ( (TrackSectionType) message );
         }
+    }
+
+    private void handleTrackSectionType ( TrackSectionType sectionType ) {
+        out.println ( "New section: " + sectionType.toString());
     }
 
     private void handleVelocityMessage(VelocityMessage velocityMessage) {
@@ -46,7 +56,15 @@ public class ConsolePlotterActor extends ActorBusActor {
     }
 
     private void plotGyroZ ( SensorEvent event ) {
-        consolePlot(event.getT(), event.getG()[2]);
+
+        int t;
+        if ( event.getT() == 0 ) {
+            if ( startTime == 0 ) startTime = event.getTimeStamp();
+            t = (int)(event.getTimeStamp()-startTime);
+        } else {
+            t = event.getT();
+        }
+        consolePlot(t, event.getG()[2]);
     }
 
     private void consolePlot(int t, int val) {

@@ -6,11 +6,17 @@ server:
   port: 8092
 
 javapilot:
+  name: Team-0
+  accessCode: dogornose
+  rabbitUrl: ${FNF_SERVER}
 
-    name: Team-0
-    accessCode: dogornose
+  constantPowerProperties:
+    frequencyInHertz: 5
 
-    rabbitUrl: ${FNF_SERVER}
-
-    constantPowerProperties:
-      frequencyInHertz: 5
+  trackDetectionProperties:
+    primaryFilterSize: 3
+    upperStraightBoundary: 1000
+    lowerStraightBoundary: -1000
+    triggerSize: 3
+    gradientThreshold: 30.0
+    kickFactor: 2.0
