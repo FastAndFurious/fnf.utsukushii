@@ -40,6 +40,8 @@ export class LogReportService {
     }
 
     getLogReport(): Subject<LogReport> {
+        this.connect(true);
+        console.log("connected to web socket");
         this.http.get(this.restUrl).subscribe(
             (res) => this.reports.next(res.json() as LogReport),
 
@@ -61,9 +63,7 @@ export class LogReportService {
             self.socket.onmessage = (ev: MessageEvent) => {
                 //   console.log('onNext: %s', ev.data);
                 self.onMessageHandler(ev);
-                console.log("Got event: " + event);
                 let report = JSON.parse(ev.data) as LogReport;
-                console.log("Got report: " + report);
                 this.reports.next(report);
             };
             this.socket.onclose = (ev: CloseEvent) => {

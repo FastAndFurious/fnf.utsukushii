@@ -25,30 +25,8 @@ export class LogReportComponent implements OnInit, OnDestroy {
         );
     }
 
-    wsConnect(): void {
-
-        this.logReportService.connect();
-        console.log("trying to subscribe to ws");
-        //this.logReportService.send("Hello");
-        this.logReportService.getLogReport().subscribe(
-            res => {
-                //var report: LogReport = JSON.parse(res.data);
-                console.log('Component got report: ' + res);
-                console.log('Got Report: ' + res.entries + " entries.");
-            },
-            function (e) {
-                console.log('Error: ' + e.message);
-            },
-            function () {
-                console.log('Completed');
-            }
-        );
-    }
-
-
     ngOnInit(): void {
         this.getReport();
-        this.wsConnect();
     }
 
     ngOnDestroy(): void {
