@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
 import com.zuehlke.fnf.actorbus.logging.LoggingReceiver;
+import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 
 public class ActorBus {
 
@@ -12,11 +13,11 @@ public class ActorBus {
     private final ActorRef monitorActor;
     private final ActorRef loggerActor;
 
-    ActorBus(ActorSystem actorSystem) {
+    ActorBus(ActorSystem actorSystem, UtsukushiiProperties properties ) {
         this.actorSystem = actorSystem;
         this.dispatcherActor = actorSystem.actorOf(DispatcherActor.props());
         this.monitorActor = actorSystem.actorOf(MonitorActor.props(dispatcherActor, 3000));
-        this.loggerActor = actorSystem.actorOf(LoggingReceiver.props());
+        this.loggerActor = actorSystem.actorOf(LoggingReceiver.props(properties.getLoggingReceiverProperties(), dispatcherActor));
     }
 
     public ActorRef register (String name, Props props, Subscriptions subscriptions ) {

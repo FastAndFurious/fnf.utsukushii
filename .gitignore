@@ -22,3 +22,6 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+/src/main/resources/static/app/*/*.js
+/src/main/resources/static/typings/

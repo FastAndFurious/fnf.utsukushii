@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class ActorBusActor extends AbstractLoggingActor {
 
-    private ActorRef dispatcher;
+    protected ActorRef dispatcher;
     private ActorRef monitor;
     private String name;
     private long t_out;

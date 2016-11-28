@@ -1,6 +1,7 @@
 package com.zuehlke.fnf.actorbus;
 
 import akka.actor.ActorSystem;
+import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,7 +16,7 @@ public class ActorBusConfiguration {
     }
 
     @Bean
-    public ActorBus actorBus ( ActorSystem actorSystem ) {
-        return new ActorBus( actorSystem );
+    public ActorBus actorBus (ActorSystem actorSystem, UtsukushiiProperties properties) {
+        return new ActorBus( actorSystem, properties );
     }
 }

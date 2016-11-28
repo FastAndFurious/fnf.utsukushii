@@ -11,7 +11,7 @@ public class TrackSectionStartDetectorTest {
     public void testAll () {
 
         // smoothing with a length of 4, threshold 100 and -100, and 3 subsequent values to trigger a section
-        TrackSectionStartDetector detector = new TrackSectionStartDetector(4, 1000, -1000, 3, 6.0, 1.0 );
+        TrackSectionStartDetector detector = new TrackSectionStartDetector(4, 1000, -1000, 3, 6.0, 3.0 );
 
         int i = 1;
 
@@ -66,7 +66,6 @@ public class TrackSectionStartDetectorTest {
         TrackSectionStartDetector detector = new TrackSectionStartDetector(3, 1000, -1000, 3, 30.0, 2.0 );
         int i = 0;
         for ( int[] d: data ) {
-            System.out.println(i++);
             detector.putAndDetect(d[0], d[1]).ifPresent(System.out::println);
         }
 
@@ -74,30 +73,3 @@ public class TrackSectionStartDetectorTest {
 }
 
 
-
-/*
-new int[][]{
-new int[] { 0049247,                                       -3540},
-new int[] { 0049273,                                -4763},
-new int[] { 0049293,                         -5885},
-new int[] { 0049309,                         -5908},
-new int[] { 0049338,                                   -4270},
-new int[] { 0049358,                                    -4001},
-new int[] { 0049387,                                                 -1958},
-new int[] { 0049400,                                                       -968},
-new int[] { 0049413,                                                               427},
-new int[] { 0049429,                                                                   1081},
-new int[] { 0049452,                                                            -7},
-new int[] { 0049481,                                                                 678},
-new int[] { 0049494,                                                            -122},
-new int[] { 0049509,                                                           -247},
-new int[] { 0049525,                                                               340},
-new int[] { 0049547,                                                               338},
-new int[] { 0049570,                                                           -260},
-new int[] { 0049593,                                                          -403},
-new int[] { 0049620,                                                                535},
-new int[] { 0049624,                                                              216},
-new int[] { 0049646,                                                             53},
-new int[] { 0049665,                                                            -33}
-}
- */

@@ -5,7 +5,7 @@ spring:
 server:
   port: 8092
 
-javapilot:
+utsukushii:
   name: Team-0
   accessCode: dogornose
   rabbitUrl: ${FNF_SERVER}
@@ -20,3 +20,10 @@ javapilot:
     triggerSize: 3
     gradientThreshold: 30.0
     kickFactor: 2.0
+
+  trackModelActorProperties:
+    minStraightLength: 160 # milliseconds
+    minNumberOfCurves: 4 # expect at least four major curves
+
+  loggingReceiverProperties:
+    publishEveryAfter: 5000
