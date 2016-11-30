@@ -1,6 +1,5 @@
 package com.zuehlke.fnf.utsukushii.web;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
@@ -23,4 +22,6 @@ public class WebSocketConfig implements WebSocketConfigurer {
     public WebSocketHandler webSocketHandler () {
         return webSocketHandler;
     }
+
+
 }
