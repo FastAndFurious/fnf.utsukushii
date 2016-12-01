@@ -2,7 +2,7 @@ package com.zuehlke.fnf.actorbus;
 
 import java.util.ArrayDeque;
 
-public class UsageStatistics {
+class UsageStatistics {
 
     private final String name;
     private int total_busy;
@@ -19,14 +19,10 @@ public class UsageStatistics {
         total_idle += newRecord.d_idle;
         total_busy += newRecord.d_busy;
         records.add(newRecord);
-        while ( records.size() > 1 ) {
-            if ( total_idle + total_busy > period ) {
+        while ( records.size() > 1 && total_idle + total_busy > period ) {
                 total_idle -= records.getFirst().d_idle;
                 total_busy -= records.getFirst().d_busy;
                 records.removeFirst();
-            } else {
-                break;
-            }
         }
         return this;
     }

@@ -14,17 +14,23 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/")
 @Slf4j
 public class ReplayRestResource {
 
+    private final static String DATA_DIR = "/data/";
+
     private final ActorBus actorBus;
+    private final RaceDataProvider provider;
 
     @Autowired
-    public ReplayRestResource(ActorBus actorBus) {
+    public ReplayRestResource(ActorBus actorBus) throws Exception {
+
         this.actorBus = actorBus;
+        provider = new ClassPathRaceDataProvider(DATA_DIR);
     }
 
     @RequestMapping(value = "/replay", method = RequestMethod.POST, produces = "application/json")
@@ -32,7 +38,7 @@ public class ReplayRestResource {
 
         log.info("Received command to replay file " + command.getFilename());
 
-        Resource resource = new ClassPathResource( "/data/" + command.getFilename());
+        Resource resource = new ClassPathResource( DATA_DIR + command.getFilename());
 
         try {
             RaceData raceData = new ObjectMapper().readValue(resource.getInputStream(), RaceData.class);
@@ -47,5 +53,12 @@ public class ReplayRestResource {
 
     }
 
+    @RequestMapping(value="/replay", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> getFileInfos () {
+
+        log.info("Received Request to provide all file info records.");
+
+        return new ResponseEntity<>(provider.list(), HttpStatus.OK);
+    }
 
 }
