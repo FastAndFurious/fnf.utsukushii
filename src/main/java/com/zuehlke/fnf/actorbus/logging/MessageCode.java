@@ -6,4 +6,5 @@ package com.zuehlke.fnf.actorbus.logging;
 public enum MessageCode {
     NOT_A_LOG_ENTRY,
     USAGE,
+    SERVER_ERROR
 }

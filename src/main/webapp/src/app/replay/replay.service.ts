@@ -21,8 +21,19 @@ export class ReplayService {
     }
 
     start ( cmd: ReplayCommand ) : Observable<Response> {
-
         return this.http.post("api/replay", cmd );
+    }
+
+    suspend () : Observable<Response> {
+        return this.http.post("api/replay/suspend", null);
+    }
+
+    resume () : Observable<Response> {
+        return this.http.post("api/replay/resume", null );
+    }
+
+    stop () : Observable<Response> {
+        return this.http.post("api/replay/stop", null );
     }
 
 }

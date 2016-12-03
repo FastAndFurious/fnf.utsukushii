@@ -32,8 +32,16 @@ public class ReplayRestResource {
         provider = new ClassPathRaceDataProvider(DATA_DIR);
     }
 
+    @RequestMapping(value="/replay", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<?> getFileInfos () {
+
+        log.debug("Received Request to provide all file info records.");
+
+        return new ResponseEntity<>(provider.list(), HttpStatus.OK);
+    }
+
     @RequestMapping(value = "/replay", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<?> postReplayCommand(@RequestBody ReplayCommand command) {
+    public ResponseEntity<?> start(@RequestBody ReplayCommand command) {
 
         log.info("Received command to replay file " + command.getFileName());
 
@@ -52,12 +60,28 @@ public class ReplayRestResource {
 
     }
 
-    @RequestMapping(value="/replay", method = RequestMethod.GET, produces = "application/json")
-    public ResponseEntity<?> getFileInfos () {
+    @RequestMapping(value="/replay/stop", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> stop () {
 
-        log.debug("Received Request to provide all file info records.");
+        log.info("Received Request to stop current replay.");
+        actorBus.publish(new StopReplayCommand());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(provider.list(), HttpStatus.OK);
+    @RequestMapping(value="/replay/suspend", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> suspend () {
+
+        log.info("Received Request to suspend current replay.");
+        actorBus.publish(new SuspendReplayCommand());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/replay/resume", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> resume () {
+
+        log.info("Received Request to resume current replay.");
+        actorBus.publish(new ResumeReplayCommand());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

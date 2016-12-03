@@ -4,7 +4,7 @@
         Hz
 </div>
 <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-8">
         <table class="table">
             <thead>
             <tr>
@@ -16,6 +16,8 @@
                 <th>Sensors</th>
                 <th>Duration [s]</th>
                 <th>Start Time</th>
+                <th></th>
+                <th></th>
                 <th></th>
                 <th></th>
             </tr>
@@ -49,10 +51,16 @@
                     <button class="btn btn-sm btn-success" (click)="start(info.fileName)">Start</button>
                 </td>
                 <td>
-                    <button class="btn btn-sm btn-warning">Stop</button>
+                    <button class="btn btn-sm btn-info" (click)="suspend()">Suspend</button>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-info" (click)="resume()">Resume</button>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning" (click)="stop()">Stop</button>
                 </td>
             </tr>
         </table>
     </div>
-    <div class="col-md-6"></div>
+    <div class="col-md-4"></div>
 </div>

@@ -8,12 +8,17 @@ import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
 import com.zuehlke.fnf.actorbus.ActorBusActor;
 import com.zuehlke.fnf.actorbus.ScheduledTask;
 import com.zuehlke.fnf.actorbus.Subscriptions;
+import com.zuehlke.fnf.actorbus.logging.MessageCode;
+import com.zuehlke.fnf.actorbus.logging.Severity;
 import com.zuehlke.fnf.utsukushii.ScheduleNames;
 
 public class ReplayActor extends ActorBusActor{
 
-    public static Subscriptions subscriptions = Subscriptions
-            .forClass(RaceData.class);
+    public static final Subscriptions subscriptions = Subscriptions
+            .forClass(RaceData.class)
+            .andForClass(SuspendReplayCommand.class)
+            .andForClass(ResumeReplayCommand.class)
+            .andForClass(StopReplayCommand.class);
 
     public static Props props () {
         return Props.create(ReplayActor.class, ReplayActor::new);
@@ -37,6 +42,15 @@ public class ReplayActor extends ActorBusActor{
         if ( message instanceof RaceData ) {
             handleRaceData((RaceData) message);
 
+        } else if ( message instanceof SuspendReplayCommand ) {
+            suspend();
+
+        } else if ( message instanceof ResumeReplayCommand ) {
+            resume();
+
+        } else if ( message instanceof StopReplayCommand ) {
+            stop();
+
         } else if ( message instanceof SetFrequencyCommand ) {
             this.frequency = ((SetFrequencyCommand)message).getFrequency();
 
@@ -50,7 +64,7 @@ public class ReplayActor extends ActorBusActor{
 
     private void handleRaceData(RaceData data) {
 
-        createStartMessage(data);
+        publishStartMessage(data);
 
         this.data = data;
         vs = data.getVelocityMessages().size();
@@ -59,10 +73,35 @@ public class ReplayActor extends ActorBusActor{
         si = 0;
         index = 0;
 
+        start();
+    }
+
+    private void suspend () {
+        cancelSchedule(ScheduleNames.REPLAY);
+    }
+
+    private void start() {
         scheduleRecurring((int) (1000 / frequency), ScheduleNames.REPLAY);
     }
 
+    private void resume () {
+
+        if ( data != null ) {
+            scheduleRecurring((int) (1000 / frequency), ScheduleNames.REPLAY);
+        }
+    }
+
+    private void stop () {
+        cancelSchedule(ScheduleNames.REPLAY);
+        this.data = null;
+    }
+
     private void handleNextMessage () {
+
+        if ( data == null ) {
+            error(MessageCode.SERVER_ERROR,
+                    "Shouldn't get here with no data.", "Scheduled Message.");
+        }
 
         if ( index < vs + ss ) {
             index ++;
@@ -97,19 +136,19 @@ public class ReplayActor extends ActorBusActor{
             }
 
         } else {
-            createStopMessage(data);
+            publishStopMessage(data);
             cancelSchedule(ScheduleNames.REPLAY);
         }
     }
 
-    private void createStartMessage(RaceData data) {
+    private void publishStartMessage(RaceData data) {
         String track = data.getTrackId();
         String team = data.getTeamId();
         long now = System.currentTimeMillis();
         publish(new RaceStartMessage(track, "replay", team, now, "replayed from file", false));
     }
 
-    private void createStopMessage(RaceData data) {
+    private void publishStopMessage(RaceData data) {
         String track = data.getTrackId();
         String team = data.getTeamId();
         long now = System.currentTimeMillis();
