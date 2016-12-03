@@ -25,3 +25,5 @@ nbdist/
 
 /src/main/resources/static/app/*/*.js
 /src/main/resources/static/typings/
+
+npm-debug.log
