@@ -1,9 +1,15 @@
 <div class="padding10">
-<nav>
-    <a routerLink="/logreport" routerLinkActive="active">Logs</a>
-    <a routerLink="/params" routerLinkActive="active">Params</a>
-    <a routerLink="/replay" routerLinkActive="active">Replay</a>
-</nav>
-<h1>{{title}}</h1>
-<router-outlet></router-outlet>
+    <span>
+    <img src="utsukushii.png">
+    </span>
+    <span>
+        <nav>
+            <a routerLink="/logreport" routerLinkActive="active">Logs</a>
+            <a routerLink="/params" routerLinkActive="active">Params</a>
+            <a routerLink="/replay" routerLinkActive="active">Replay</a>
+        </nav>
+    </span>
+    <div>
+        <router-outlet></router-outlet>
+    </div>
 </div>

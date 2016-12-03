@@ -42,6 +42,7 @@ public class WebSocketHandler extends TextWebSocketHandler {
             session.sendMessage(new TextMessage(payload));
         } catch (Exception e) {
             log.error("Failed to send log report. Exception was: " + e.getMessage());
+            session = null;
         }
     }
 }

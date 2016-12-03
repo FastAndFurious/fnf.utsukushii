@@ -1,0 +1,58 @@
+<h1>Replay</h1>
+<div>
+        Play at Frequency: <input type="number" id="frequency" required [(ngModel)]="frequency">
+        Hz
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>File Name</th>
+                <th>Team</th>
+                <th>Track</th>
+                <th>Race Type</th>
+                <th>File Status</th>
+                <th>Sensors</th>
+                <th>Duration [s]</th>
+                <th>Start Time</th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tr *ngFor="let info of raceData">
+                <td>
+                    {{info.fileName}}
+                </td>
+                <td>
+                    {{info.teamName}}
+                </td>
+                <td>
+                    {{info.trackName}}
+                </td>
+                <td>
+                    {{info.raceType}}
+                </td>
+                <td>
+                    {{info.status}}
+                </td>
+                <td>
+                    {{info.numSensors}}
+                </td>
+                <td>
+                    {{info.duration / 1000.0}}
+                </td>
+                <td>
+                    {{info.startTime}}
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-success" (click)="start(info.fileName)">Start</button>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-warning">Stop</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6"></div>
+</div>

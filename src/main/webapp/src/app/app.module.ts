@@ -7,11 +7,13 @@ import {LogReportComponent} from "./logreport/logreport.component";
 import {LogReportService} from "./logreport/logreport.service";
 
 import {AppComponent} from './app.component';
+import {ReplayComponent} from "./replay/replay.component";
 
 @NgModule({
     declarations: [
         AppComponent,
-        LogReportComponent
+        LogReportComponent,
+        ReplayComponent
     ],
     imports: [
         BrowserModule,

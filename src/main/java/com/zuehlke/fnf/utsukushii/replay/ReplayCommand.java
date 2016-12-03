@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class ReplayCommand {
 
-    private String filename;
+    private String fileName;
     private float frequency;
 }
