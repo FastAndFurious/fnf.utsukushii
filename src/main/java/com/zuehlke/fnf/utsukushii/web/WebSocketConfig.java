@@ -10,18 +10,21 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private WebSocketHandler webSocketHandler = new WebSocketHandler();
+    private WebSocketHandler logReportHandler = new WebSocketHandler();
+    private WebSocketHandler replayStatusHandler = new WebSocketHandler();
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
 
-        webSocketHandlerRegistry.addHandler ( webSocketHandler, "/ws/logreports");
+        webSocketHandlerRegistry.addHandler (logReportHandler, "/ws/logreports");
+        webSocketHandlerRegistry.addHandler (replayStatusHandler, "/ws/replaystatus");
     }
 
     @Bean
-    public WebSocketHandler webSocketHandler () {
-        return webSocketHandler;
+    public WebSocketHandler logReportHandler () {
+        return logReportHandler;
     }
 
-
+    @Bean
+    public WebSocketHandler replayStatusHandler () { return replayStatusHandler; }
 }

@@ -14,6 +14,7 @@ import com.zuehlke.fnf.utsukushii.strategy.StrategyGatewayActor;
 import com.zuehlke.fnf.utsukushii.web.WebSocketPublisherActor;
 import com.zuehlke.fnf.utsukushii.web.WebSocketHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -24,17 +25,21 @@ public class UtsukushiiBootStrapper {
 
     private final ActorBus bus;
     private final PilotToRelayConnectionFactory connectionFactory;
-    private final WebSocketHandler wsHandler;
+    private final WebSocketHandler replayStatusHandler;
+    private final WebSocketHandler logReportHandler;
     private PilotToRelayConnection connection;
     private UtsukushiiProperties props;
 
     @Autowired
     public UtsukushiiBootStrapper(ActorBus bus, PilotToRelayConnectionFactory connectionFactory,
-                                  UtsukushiiProperties props, WebSocketHandler wsHandler ) {
+                                  UtsukushiiProperties props,
+                                  @Qualifier("logReportHandler") WebSocketHandler logReportHandler,
+                                  @Qualifier("replayStatusHandler") WebSocketHandler replayStatusHandler) {
         this.props = props;
         this.bus = bus;
         this.connectionFactory = connectionFactory;
-        this.wsHandler = wsHandler;
+        this.replayStatusHandler = replayStatusHandler;
+        this.logReportHandler = logReportHandler;
     }
 
     @PostConstruct
@@ -65,7 +70,8 @@ public class UtsukushiiBootStrapper {
         bus.register("TrackModelActor", TrackModelActor.props(props.getTrackModelActorProperties()),
                 TrackModelActor.subscriptions);
 
-        bus.register("StompPublisherActor", WebSocketPublisherActor.props(wsHandler), WebSocketPublisherActor.subscriptions);
+        bus.register("WebsocketublisherActor", WebSocketPublisherActor.props(logReportHandler, replayStatusHandler),
+                WebSocketPublisherActor.subscriptions);
     }
 
 

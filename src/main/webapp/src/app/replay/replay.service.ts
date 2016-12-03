@@ -3,21 +3,30 @@ import {Http, Response} from "@angular/http";
 import {RaceDataFileInfo} from "./RaceDataFileInfo_";
 import {Subject, Observable} from "rxjs";
 import {ReplayCommand} from "./ReplayCommand";
+import {ReplayStatus} from "./ReplayStatus";
+import {WebSocketService} from "../websocket/websocket.service";
 
 @Injectable ()
 export class ReplayService {
 
-    private observable = new Subject<RaceDataFileInfo[]>();
+    private fileInfoObservable = new Subject<RaceDataFileInfo[]>();
+    private replayStatusObservable = new Subject<ReplayStatus>();
 
-    constructor ( private http: Http ) {}
+    constructor ( private http: Http, private websocketService: WebSocketService) {}
 
     listAll () : Subject<RaceDataFileInfo []> {
 
         this.http.get("api/replay").subscribe((data)=>{
-            this.observable.next(data.json() as RaceDataFileInfo[]);
+            this.fileInfoObservable.next(data.json() as RaceDataFileInfo[]);
         });
-        return this.observable;
+        return this.fileInfoObservable;
 
+    }
+
+    getReplayStatus () : Observable<ReplayStatus> {
+
+        this.websocketService.connect(true, "/ws/replaystatus", this.replayStatusObservable);
+        return this.replayStatusObservable;
     }
 
     start ( cmd: ReplayCommand ) : Observable<Response> {

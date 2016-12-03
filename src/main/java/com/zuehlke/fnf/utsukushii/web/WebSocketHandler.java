@@ -1,7 +1,6 @@
 package com.zuehlke.fnf.utsukushii.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zuehlke.fnf.actorbus.logging.LogReport;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -32,16 +31,16 @@ public class WebSocketHandler extends TextWebSocketHandler {
     }
 
 
-    public void send (LogReport logReport ) {
+    void send (Object object ) {
         if ( session == null ) {
-            log.debug ( "Can't send log report. No session established yet");
+            log.trace ( "Can't send log report. No session established yet");
             return;
         }
         try {
-            String payload = new ObjectMapper().writeValueAsString(logReport);
+            String payload = new ObjectMapper().writeValueAsString(object);
             session.sendMessage(new TextMessage(payload));
         } catch (Exception e) {
-            log.error("Failed to send log report. Exception was: " + e.getMessage());
+            log.error("Failed to send message. Exception was: " + e.getMessage());
             session = null;
         }
     }

@@ -3,19 +3,19 @@ import {LogReport, LogEntryCounter} from './logreport';
 import {LogReportService} from "./logreport.service";
 import {Router} from '@angular/router';
 import {Observable} from "rxjs";
+import {WebSocketService} from "../websocket/websocket.service";
 
 @Component({
     selector: 'log-report',
     styleUrls: ['./logreport.component.css'],
     templateUrl: './logreport.component.html',
-    providers: [LogReportService]
+    providers: [LogReportService, WebSocketService]
 })
 export class LogReportComponent implements OnInit, OnDestroy {
 
     report: LogReport = new LogReport();
-    selectedEntry: LogEntryCounter;
 
-    constructor(private logReportService: LogReportService, private router: Router) {
+    constructor(private logReportService: LogReportService) {
     }
 
     getReport(): void {

@@ -4,28 +4,42 @@ import akka.actor.Props;
 import com.zuehlke.fnf.actorbus.ActorBusActor;
 import com.zuehlke.fnf.actorbus.Subscriptions;
 import com.zuehlke.fnf.actorbus.logging.LogReport;
+import com.zuehlke.fnf.actorbus.logging.MessageCode;
+import com.zuehlke.fnf.utsukushii.replay.ReplayStatus;
 
 public class WebSocketPublisherActor extends ActorBusActor {
 
-    private WebSocketHandler webSocketHandler;
+    public static final Subscriptions subscriptions = Subscriptions
+            .forClass(LogReport.class)
+            .andForClass(ReplayStatus.class);
 
-    public static Props props(WebSocketHandler wsHandler) {
-        return Props.create(WebSocketPublisherActor.class, () -> new WebSocketPublisherActor(wsHandler));
+    private WebSocketHandler logReportHandler;
+    private WebSocketHandler replayStatusHandler;
+
+    public static Props props(WebSocketHandler logReportHandler, WebSocketHandler replayStatusHandler) {
+        return Props.create(WebSocketPublisherActor.class, () -> new WebSocketPublisherActor(logReportHandler, replayStatusHandler));
     }
 
-    public static Subscriptions subscriptions = Subscriptions.forClass(LogReport.class);
+    private WebSocketPublisherActor(WebSocketHandler logReportHandler, WebSocketHandler replayStatusHandler) {
 
-    private WebSocketPublisherActor(WebSocketHandler webSocketHandler) {
-
-        super("StompPublisherActor");
-        this.webSocketHandler = webSocketHandler;
+        super("WebSocketPublisherActor");
+        this.logReportHandler = logReportHandler;
+        this.replayStatusHandler = replayStatusHandler;
     }
 
     @Override
     protected void onReceive2(Object message) throws Exception {
 
         if (message instanceof LogReport) {
-            webSocketHandler.send((LogReport) message);
+            logReportHandler.send(message);
+
+        } else if (message instanceof ReplayStatus) {
+            replayStatusHandler.send(message);
+
+        } else {
+            warn(MessageCode.ILLEGAL_MESSAGE, "Not ready to send message of type "
+                    + message.getClass(), getSender().toString());
+            unhandled( message );
         }
 
     }

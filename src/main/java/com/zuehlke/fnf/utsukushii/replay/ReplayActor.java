@@ -9,7 +9,6 @@ import com.zuehlke.fnf.actorbus.ActorBusActor;
 import com.zuehlke.fnf.actorbus.ScheduledTask;
 import com.zuehlke.fnf.actorbus.Subscriptions;
 import com.zuehlke.fnf.actorbus.logging.MessageCode;
-import com.zuehlke.fnf.actorbus.logging.Severity;
 import com.zuehlke.fnf.utsukushii.ScheduleNames;
 
 public class ReplayActor extends ActorBusActor{
@@ -24,6 +23,8 @@ public class ReplayActor extends ActorBusActor{
         return Props.create(ReplayActor.class, ReplayActor::new);
     }
 
+    private static final int STATUS_UPDATE_FREQUENCY_WHEN_IDLE = 2000; // milliseconds
+    private static final int STATUS_UPDATE_FREQUENCY_WHEN_PLAYING = 100; // milliseconds
     private int index;
     private int vs;
     private int ss;
@@ -31,16 +32,18 @@ public class ReplayActor extends ActorBusActor{
     private int si;
     private float frequency = 50;
     private RaceData data;
+    private ReplayStatus.Status status = ReplayStatus.Status.OFF;
 
     private ReplayActor() {
         super("ReplayActor");
+        scheduleRecurring(STATUS_UPDATE_FREQUENCY_WHEN_IDLE, ScheduleNames.PUBLISH);
     }
 
     @Override
     protected void onReceive2(Object message) throws Exception {
 
         if ( message instanceof RaceData ) {
-            handleRaceData((RaceData) message);
+            startIfPossible((RaceData) message);
 
         } else if ( message instanceof SuspendReplayCommand ) {
             suspend();
@@ -58,12 +61,31 @@ public class ReplayActor extends ActorBusActor{
 
             if (ScheduleNames.REPLAY.equals(((ScheduledTask)message).getTaskId())) {
                 handleNextMessage();
+            } else if ( ScheduleNames.PUBLISH.equals(((ScheduledTask)message).getTaskId())) {
+                publishStatus ();
             }
         }
     }
 
-    private void handleRaceData(RaceData data) {
+    private void publishStatus () {
+        int milliesSinceStart = 0;
+        ReplayStatus newStatus;
+        if ( data == null ) {
+            newStatus = ReplayStatus.OFF;
+        } else {
+            newStatus = new ReplayStatus(status, data.getId(), milliesSinceStart);
+        }
+        publish(newStatus);
+    }
 
+    private void startIfPossible(RaceData data) {
+
+        if ( status == ReplayStatus.Status.PLAYING ) {
+            warn(MessageCode.ALREADY_PLAYING, "Can't start new replay. Already playing.", getSender().path().name());
+            return;
+        }
+        status = ReplayStatus.Status.PLAYING;
+        setNewStatusUpdateFrequency( STATUS_UPDATE_FREQUENCY_WHEN_PLAYING );
         publishStartMessage(data);
 
         this.data = data;
@@ -73,27 +95,35 @@ public class ReplayActor extends ActorBusActor{
         si = 0;
         index = 0;
 
-        start();
+        scheduleRecurring((int) (1000 / frequency), ScheduleNames.REPLAY);
+        setNewStatusUpdateFrequency( STATUS_UPDATE_FREQUENCY_WHEN_PLAYING );
     }
 
     private void suspend () {
+        status = ReplayStatus.Status.SUSPENDED;
         cancelSchedule(ScheduleNames.REPLAY);
-    }
-
-    private void start() {
-        scheduleRecurring((int) (1000 / frequency), ScheduleNames.REPLAY);
+        setNewStatusUpdateFrequency( STATUS_UPDATE_FREQUENCY_WHEN_IDLE );
     }
 
     private void resume () {
 
         if ( data != null ) {
+            status = ReplayStatus.Status.PLAYING;
             scheduleRecurring((int) (1000 / frequency), ScheduleNames.REPLAY);
         }
     }
 
     private void stop () {
+        status = ReplayStatus.Status.OFF;
+        setNewStatusUpdateFrequency( STATUS_UPDATE_FREQUENCY_WHEN_IDLE );
         cancelSchedule(ScheduleNames.REPLAY);
+        publishStopMessage(data);
         this.data = null;
+    }
+
+    private void setNewStatusUpdateFrequency(int newFrequency) {
+        cancelSchedule(ScheduleNames.PUBLISH);
+        scheduleRecurring(newFrequency, ScheduleNames.PUBLISH);
     }
 
     private void handleNextMessage () {

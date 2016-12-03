@@ -8,6 +8,7 @@ import {LogReportService} from "./logreport/logreport.service";
 
 import {AppComponent} from './app.component';
 import {ReplayComponent} from "./replay/replay.component";
+import {WebSocketService} from "./websocket/websocket.service";
 
 @NgModule({
     declarations: [
@@ -21,7 +22,7 @@ import {ReplayComponent} from "./replay/replay.component";
         HttpModule,
         routing
     ],
-    providers: [LogReportService],
+    providers: [LogReportService, WebSocketService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
