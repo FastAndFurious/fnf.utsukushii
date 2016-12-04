@@ -45,4 +45,7 @@ export class ReplayService {
         return this.http.post("api/replay/stop", null );
     }
 
+    closeWebsocket() {
+        this.websocketService.close(true);
+    }
 }

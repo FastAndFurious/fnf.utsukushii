@@ -1,6 +1,6 @@
 export class ReplayStatus {
     constructor () {
-        status = "OFF";
+        this.status = "OFF";
     }
     status: string;
     fileName: string;

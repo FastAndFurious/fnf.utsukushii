@@ -27,13 +27,18 @@ public class WebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
         this.session = session;
-        log.info ("Session established.");
+        log.debug ("Session established.");
     }
 
 
     void send (Object object ) {
         if ( session == null ) {
             log.trace ( "Can't send log report. No session established yet");
+            return;
+        }
+        if ( !session.isOpen()) {
+            log.trace ( "Cannot send log report. Session was closed.");
+            session = null;
             return;
         }
         try {

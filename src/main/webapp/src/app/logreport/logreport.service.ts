@@ -32,5 +32,7 @@ export class LogReportService {
     }
 
 
-
+    closeWebsocket() {
+        this.websocketService.close(true);
+    }
 }

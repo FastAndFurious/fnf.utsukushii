@@ -1,8 +1,6 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {LogReport, LogEntryCounter} from './logreport';
+import {Component, OnInit, OnDestroy} from "@angular/core";
+import {LogReport} from "./logreport";
 import {LogReportService} from "./logreport.service";
-import {Router} from '@angular/router';
-import {Observable} from "rxjs";
 import {WebSocketService} from "../websocket/websocket.service";
 
 @Component({
@@ -30,7 +28,8 @@ export class LogReportComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-
+        console.log("closing websocket...");
+        this.logReportService.closeWebsocket();
     }
 
     displayReport(report: LogReport): void {
