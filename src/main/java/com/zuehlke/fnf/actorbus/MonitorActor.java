@@ -7,6 +7,7 @@ import com.zuehlke.fnf.utsukushii.ScheduleNames;
 import akka.actor.UntypedActor;
 import scala.concurrent.duration.Duration;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +53,9 @@ class MonitorActor extends UntypedActor {
                 int usage = s.getUsageInPercent();
                 return new UsageReportEntry(name, busy, idle, period, usage);
             }).collect(Collectors.toList());
+            entries.sort(Comparator.comparing(UsageReportEntry::getName));
             UsageReport usageReport = new UsageReport (entries);
             dispatcher.tell(usageReport, getSelf());
-            //System.out.print(usageReport.getEntries().size());
         } else {
             unhandled(message);
         }

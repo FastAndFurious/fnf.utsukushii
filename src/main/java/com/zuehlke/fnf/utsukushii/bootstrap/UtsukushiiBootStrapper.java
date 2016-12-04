@@ -76,6 +76,9 @@ public class UtsukushiiBootStrapper {
         bus.register("WebsocketPublisherActor",
                 WebSocketPublisherActor.props(logReportHandler, replayStatusHandler, usageStatsHandler),
                 WebSocketPublisherActor.subscriptions);
+
+        bus.register("ProbingActor", ProbingActor.props(),
+                ProbingActor.subscriptions);
     }
 
 
