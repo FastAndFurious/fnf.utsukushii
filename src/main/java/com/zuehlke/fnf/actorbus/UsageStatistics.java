@@ -35,5 +35,15 @@ class UsageStatistics {
         return name;
     }
 
+    public int getTotal_busy() {
+        return total_busy;
+    }
 
+    public int getTotal_idle() {
+        return total_idle;
+    }
+
+    public int getPeriod() {
+        return period;
+    }
 }

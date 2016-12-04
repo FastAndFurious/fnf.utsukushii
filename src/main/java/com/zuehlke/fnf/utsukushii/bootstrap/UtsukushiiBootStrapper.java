@@ -27,6 +27,7 @@ public class UtsukushiiBootStrapper {
     private final PilotToRelayConnectionFactory connectionFactory;
     private final WebSocketHandler replayStatusHandler;
     private final WebSocketHandler logReportHandler;
+    private final WebSocketHandler usageStatsHandler;
     private PilotToRelayConnection connection;
     private UtsukushiiProperties props;
 
@@ -34,12 +35,14 @@ public class UtsukushiiBootStrapper {
     public UtsukushiiBootStrapper(ActorBus bus, PilotToRelayConnectionFactory connectionFactory,
                                   UtsukushiiProperties props,
                                   @Qualifier("logReportHandler") WebSocketHandler logReportHandler,
-                                  @Qualifier("replayStatusHandler") WebSocketHandler replayStatusHandler) {
+                                  @Qualifier("replayStatusHandler") WebSocketHandler replayStatusHandler,
+                                  @Qualifier("usageStatsHandler") WebSocketHandler usageStatsHandler ) {
         this.props = props;
         this.bus = bus;
         this.connectionFactory = connectionFactory;
         this.replayStatusHandler = replayStatusHandler;
         this.logReportHandler = logReportHandler;
+        this.usageStatsHandler = usageStatsHandler;
     }
 
     @PostConstruct
@@ -70,7 +73,8 @@ public class UtsukushiiBootStrapper {
         bus.register("TrackModelActor", TrackModelActor.props(props.getTrackModelActorProperties()),
                 TrackModelActor.subscriptions);
 
-        bus.register("WebsocketublisherActor", WebSocketPublisherActor.props(logReportHandler, replayStatusHandler),
+        bus.register("WebsocketPublisherActor",
+                WebSocketPublisherActor.props(logReportHandler, replayStatusHandler, usageStatsHandler),
                 WebSocketPublisherActor.subscriptions);
     }
 

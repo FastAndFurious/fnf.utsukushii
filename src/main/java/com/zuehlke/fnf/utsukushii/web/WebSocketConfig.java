@@ -10,14 +10,16 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @EnableWebSocket
 public class WebSocketConfig implements WebSocketConfigurer {
 
-    private WebSocketHandler logReportHandler = new WebSocketHandler();
-    private WebSocketHandler replayStatusHandler = new WebSocketHandler();
+    private WebSocketHandler logReportHandler = new WebSocketHandler("LogReportHandler");
+    private WebSocketHandler replayStatusHandler = new WebSocketHandler("ReplayStatusHandler");
+    private WebSocketHandler usageStatsHandler = new WebSocketHandler("UsageReportHandler");
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry webSocketHandlerRegistry) {
 
         webSocketHandlerRegistry.addHandler (logReportHandler, "/ws/logreports");
         webSocketHandlerRegistry.addHandler (replayStatusHandler, "/ws/replaystatus");
+        webSocketHandlerRegistry.addHandler(usageStatsHandler, "/ws/usage");
     }
 
     @Bean
@@ -27,4 +29,7 @@ public class WebSocketConfig implements WebSocketConfigurer {
 
     @Bean
     public WebSocketHandler replayStatusHandler () { return replayStatusHandler; }
+
+    @Bean
+    public WebSocketHandler usageStatsHandler () { return usageStatsHandler; }
 }

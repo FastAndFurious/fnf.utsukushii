@@ -57,6 +57,7 @@ export class ReplayComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
+        console.log("Closing socket to replay");
         this.replayService.closeWebsocket();
     }
 

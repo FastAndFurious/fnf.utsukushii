@@ -9,12 +9,15 @@ import {LogReportService} from "./logreport/logreport.service";
 import {AppComponent} from './app.component';
 import {ReplayComponent} from "./replay/replay.component";
 import {WebSocketService} from "./websocket/websocket.service";
+import {UsageComponent} from "./usage/usage.component";
+import {UsageService} from "./usage/usage.service";
 
 @NgModule({
     declarations: [
         AppComponent,
         LogReportComponent,
-        ReplayComponent
+        ReplayComponent,
+        UsageComponent
     ],
     imports: [
         BrowserModule,
@@ -22,7 +25,7 @@ import {WebSocketService} from "./websocket/websocket.service";
         HttpModule,
         routing
     ],
-    providers: [LogReportService, WebSocketService],
+    providers: [LogReportService, WebSocketService, UsageService],
     bootstrap: [AppComponent]
 })
 export class AppModule {

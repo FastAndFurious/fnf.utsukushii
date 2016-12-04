@@ -1,13 +1,22 @@
 package com.zuehlke.fnf.actorbus;
 
 import akka.actor.ActorRef;
+import akka.actor.Cancellable;
 import akka.actor.Props;
+import com.zuehlke.fnf.utsukushii.ScheduleNames;
 import akka.actor.UntypedActor;
+import scala.concurrent.duration.Duration;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
-class MonitorActor extends UntypedActor{
+class MonitorActor extends UntypedActor {
+
+    private static final int UPDATE_EVERY_AFTER = 1000;
+    private Cancellable schedule;
 
     private final Map<String, UsageStatistics> actorStats = new HashMap<>();
 
@@ -31,12 +40,51 @@ class MonitorActor extends UntypedActor{
             String senderName = getSender().path().name();
             actorStats.putIfAbsent(senderName, new UsageStatistics(senderName, usagePeriod));
             UsageStatistics stats = actorStats.get(senderName);
-            UsageRecord record = (UsageRecord) message;
-            //System.out.println("Usage for " + senderName + ": " + record.d_busy + ", " + record.d_idle);
-            dispatcher.tell(stats.with(record), getSelf());
+            stats.with((UsageRecord) message);
+
+        } else if ( message instanceof ScheduledTask ) {
+
+            List<UsageReportEntry> entries = actorStats.values().stream().map((s)->{
+                String name = s.getName();
+                int busy = s.getTotal_busy();
+                int idle = s.getTotal_idle();
+                int period = s.getPeriod();
+                int usage = s.getUsageInPercent();
+                return new UsageReportEntry(name, busy, idle, period, usage);
+            }).collect(Collectors.toList());
+            UsageReport usageReport = new UsageReport (entries);
+            dispatcher.tell(usageReport, getSelf());
+            //System.out.print(usageReport.getEntries().size());
         } else {
             unhandled(message);
         }
 
     }
+
+    @Override
+    public void preStart () {
+        scheduleRecurring();
+    }
+
+    @Override
+    public void postStop () {
+        cancelSchedule();
+    }
+
+    private void scheduleRecurring() {
+        schedule = getContext().system().scheduler().schedule(
+                Duration.create(UPDATE_EVERY_AFTER, TimeUnit.MILLISECONDS),
+                Duration.create(UPDATE_EVERY_AFTER, TimeUnit.MILLISECONDS),
+                getSelf(), new ScheduledTask(true, UPDATE_EVERY_AFTER, ScheduleNames.PUBLISH),
+                getContext().system().dispatcher(), null);
+    }
+
+
+    private void cancelSchedule() {
+        if (schedule != null && !schedule.isCancelled()) {
+            schedule.cancel();
+            schedule = null;
+        }
+    }
+
 }

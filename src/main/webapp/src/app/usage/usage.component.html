@@ -1,0 +1,18 @@
+<h1>Actor Usage at {{latest | date: "HH:mm:ss"}}</h1>
+<div style="margin-top: 30px">
+    <div class="row" *ngFor="let entry of report.entries">
+        <div class="col-md-1" style="text-align: right">{{entry.name}}</div>
+        <div class="col-md-1" style="text-align: right">{{entry.busyTime}} / {{entry.idleTime}}</div>
+        <div class="col-md-4">
+
+            <div class="progress">
+                <div class="progress-bar" [ngClass]="typeOf(entry.usage)" role="progressbar" aria-valuemax="100" aria-valuemin="0"
+                     [attr.aria-valuenow]="entry.usage"
+                     [ngStyle]="{width: entry.usage + '%'}">
+                    {{entry.usage}}%
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6"></div>
+    </div>
+</div>

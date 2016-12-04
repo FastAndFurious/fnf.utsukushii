@@ -14,7 +14,7 @@ public abstract class ActorBusActor extends AbstractLoggingActor {
     protected ActorRef dispatcher;
     private ActorRef monitor;
     private String name;
-    private long t_out;
+    private long t_out = System.currentTimeMillis();
     private Map<String, Cancellable> schedules = new HashMap<>();
 
     public ActorBusActor ( String name ) {
