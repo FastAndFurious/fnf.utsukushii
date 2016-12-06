@@ -3,7 +3,7 @@ import {Subject} from "rxjs/Subject";
 import {DOCUMENT} from "@angular/platform-browser";
 import {LogReport} from "./logreport";
 import {Http} from "@angular/http";
-import {WebSocketService} from "../websocket/websocket.service";
+import {LogReportWebSocketService} from "../websocket/logreport-websocket.service";
 
 
 @Injectable()
@@ -13,7 +13,7 @@ export class LogReportService {
     private restUrl: string;
     private reports = new Subject<LogReport>();
 
-    constructor(private http: Http, @Inject(DOCUMENT) document, private websocketService: WebSocketService) {
+    constructor(private http: Http, @Inject(DOCUMENT) document, private websocketService: LogReportWebSocketService) {
         let hostname = document.location.hostname;
         let port = document.location.port;
         this.wsPath = "/ws/logreports";
@@ -23,7 +23,7 @@ export class LogReportService {
 
     getLogReport(): Subject<LogReport> {
 
-        this.websocketService.connect(true, this.wsPath, this.reports);
+        this.websocketService.connect(true, this.reports);
         this.http.get(this.restUrl).subscribe(
             (res) => this.reports.next(res.json() as LogReport),
 

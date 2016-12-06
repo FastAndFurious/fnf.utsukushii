@@ -11,6 +11,9 @@ import {ReplayComponent} from "./replay/replay.component";
 import {WebSocketService} from "./websocket/websocket.service";
 import {UsageComponent} from "./usage/usage.component";
 import {UsageService} from "./usage/usage.service";
+import {LogReportWebSocketService} from "./websocket/logreport-websocket.service";
+import {UsageWebSocketService} from "./websocket/usage-websocket.service";
+import {ReplayStatusWebSocketService} from "./websocket/replaystatus-websocket.service";
 
 @NgModule({
     declarations: [
@@ -25,7 +28,10 @@ import {UsageService} from "./usage/usage.service";
         HttpModule,
         routing
     ],
-    providers: [LogReportService, WebSocketService, UsageService],
+    providers: [
+        LogReportService, WebSocketService, UsageService,
+        LogReportWebSocketService, UsageWebSocketService, ReplayStatusWebSocketService
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {

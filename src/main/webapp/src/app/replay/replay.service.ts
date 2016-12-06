@@ -4,7 +4,7 @@ import {RaceDataFileInfo} from "./RaceDataFileInfo_";
 import {Subject, Observable} from "rxjs";
 import {ReplayCommand} from "./ReplayCommand";
 import {ReplayStatus} from "./ReplayStatus";
-import {WebSocketService} from "../websocket/websocket.service";
+import {ReplayStatusWebSocketService} from "../websocket/replaystatus-websocket.service";
 
 @Injectable ()
 export class ReplayService {
@@ -12,7 +12,7 @@ export class ReplayService {
     private fileInfoObservable = new Subject<RaceDataFileInfo[]>();
     private replayStatusObservable = new Subject<ReplayStatus>();
 
-    constructor ( private http: Http, private websocketService: WebSocketService) {}
+    constructor ( private http: Http, private websocketService: ReplayStatusWebSocketService) {}
 
     listAll () : Subject<RaceDataFileInfo []> {
 
@@ -25,7 +25,7 @@ export class ReplayService {
 
     getReplayStatus () : Observable<ReplayStatus> {
 
-        this.websocketService.connect(true, "/ws/replaystatus", this.replayStatusObservable);
+        this.websocketService.connect(true, this.replayStatusObservable);
         return this.replayStatusObservable;
     }
 

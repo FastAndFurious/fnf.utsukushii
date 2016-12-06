@@ -1,10 +1,7 @@
-import {Injectable, Inject} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 import {Subject} from "rxjs/Subject";
-import {DOCUMENT} from "@angular/platform-browser";
 
 
-@Injectable()
 export class WebSocketService {
 
     private reconnectAttempts = 0;
@@ -29,7 +26,7 @@ export class WebSocketService {
     private config = {initialTimeout: 500, maxTimeout: 300000, reconnectIfNotNormalClose: false};
     private subject: Subject<any>;
 
-    constructor(@Inject(DOCUMENT) document) {
+    protected initWsUrl(document: any) {
         let hostname = document.location.hostname;
         let port = document.location.port;
         this.wsUrl = "ws://" + hostname + ":" + port;
@@ -37,10 +34,10 @@ export class WebSocketService {
 
 
     reconnect (): void {
-        this.connect ( true, this.completeUrl, this.subject);
+        this.connectToPath ( true, this.completeUrl, this.subject);
     }
 
-    connect(force: boolean = false, wsPath: string, subject: Subject<any>) : void {
+    protected connectToPath(force: boolean = false, wsPath: string, subject: Subject<any>) : void {
 
         this.subject = subject;
         this.completeUrl = this.wsUrl + wsPath;
@@ -182,7 +179,7 @@ export class WebSocketService {
     reconnect2() {
         this.close(true);
         let backoffDelay = this.getBackoffDelay(++this.reconnectAttempts);
-        setTimeout(this.connect(true, this.completeUrl, this.subject), backoffDelay);
+        setTimeout(this.connectToPath(true, this.completeUrl, this.subject), backoffDelay);
         return this;
     }
 

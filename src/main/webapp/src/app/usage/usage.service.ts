@@ -1,20 +1,20 @@
 import {Injectable} from "@angular/core";
 import {Subject} from "rxjs";
 import {UsageReport} from "./UsageReport";
-import {WebSocketService} from "../websocket/websocket.service";
+import {UsageWebSocketService} from "../websocket/usage-websocket.service";
 
 @Injectable()
 export class UsageService {
 
     private observable: Subject<UsageReport> = new Subject<UsageReport>();
 
-    constructor ( private websocketService : WebSocketService ) {
+    constructor ( private websocketService : UsageWebSocketService ) {
 
     }
 
     getReport () : Subject<UsageReport> {
 
-        this.websocketService.connect(true, "/ws/usage", this.observable);
+        this.websocketService.connect(true, this.observable);
         return this.observable;
     }
 
