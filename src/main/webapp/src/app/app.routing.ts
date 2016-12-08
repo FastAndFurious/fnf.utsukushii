@@ -3,6 +3,7 @@ import {Routes, RouterModule} from '@angular/router';
 import {LogReportComponent} from "./logreport/logreport.component";
 import {ReplayComponent} from "./replay/replay.component";
 import {UsageComponent} from "./usage/usage.component";
+import {PropsComponent} from "./props/props.component";
 
 const appRoutes: Routes = [
     {
@@ -21,6 +22,10 @@ const appRoutes: Routes = [
     {
         path: 'usage',
         component: UsageComponent
+    },
+    {
+        path: 'props',
+        component: PropsComponent
     }
 ];
 

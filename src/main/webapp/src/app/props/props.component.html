@@ -1,0 +1,25 @@
+<h1>Parameters</h1>
+{{props}}
+
+
+<div class="btn-group">
+    <button class="btn btn-primary btn-sm" *ngFor="let entry of propsArray" (click)="select(entry.title)">
+        {{entry.title}}
+    </button>
+</div>
+<div *ngFor="let entry of propsArray">
+    <div *ngIf="entry.title === selected">
+        <div class="panel">
+            <div class="panel-body">
+                {{entry.title}}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Doesn't work. Getting some error in primeng component code
+<p-tabView>
+    <p-tabPanel [header]="entry.title" *ngFor="let entry of propsArray">{{entry.title}}</p-tabPanel>
+</p-tabView>
+-->
