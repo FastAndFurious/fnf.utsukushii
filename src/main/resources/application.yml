@@ -11,6 +11,8 @@ utsukushii:
   rabbitUrl: ${FNF_SERVER}
 
   constantPowerProperties:
+    teamId: Utsukushii
+    accessCode: letmein
     frequencyInHertz: 5
 
   trackDetectionProperties:

@@ -1,6 +1,7 @@
 package com.zuehlke.fnf.utsukushii;
 
 import com.zuehlke.fnf.actorbus.logging.LoggingReceiverProperties;
+import com.zuehlke.fnf.util.DisplayableProperties;
 import com.zuehlke.fnf.utsukushii.constantpower.ConstantPowerProperties;
 import com.zuehlke.fnf.utsukushii.model.TrackDetectionProperties;
 import com.zuehlke.fnf.utsukushii.model.TrackModelActorProperties;
@@ -12,7 +13,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Data
 @ConfigurationProperties(prefix="utsukushii") // loaded from /resources/application.yml
-public class UtsukushiiProperties {
+public class UtsukushiiProperties extends DisplayableProperties {
     private String relayUrl;
     private String rabbitUrl;
     private String name;
@@ -21,4 +22,9 @@ public class UtsukushiiProperties {
     private TrackDetectionProperties trackDetectionProperties;
     private TrackModelActorProperties trackModelActorProperties;
     private LoggingReceiverProperties loggingReceiverProperties;
+
+    public UtsukushiiProperties(){
+        super("Basic Properties");
+    }
+
 }

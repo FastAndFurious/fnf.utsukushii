@@ -15,7 +15,6 @@ import {UsageWebSocketService} from "./websocket/usage-websocket.service";
 import {ReplayStatusWebSocketService} from "./websocket/replaystatus-websocket.service";
 import {PropsComponent} from "./props/props.component";
 import {PropsService} from "./props/props.service";
-import {TabViewModule} from "primeng/components/tabview/tabview";
 
 @NgModule({
     declarations: [
@@ -29,7 +28,6 @@ import {TabViewModule} from "primeng/components/tabview/tabview";
         BrowserModule,
         FormsModule,
         HttpModule,
-        TabViewModule,
         routing
     ],
     providers: [

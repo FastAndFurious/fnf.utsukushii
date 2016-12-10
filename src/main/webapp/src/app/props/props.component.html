@@ -1,19 +1,34 @@
 <h1>Parameters</h1>
-{{props}}
 
 
-<div class="btn-group">
-    <button class="btn btn-primary btn-sm" *ngFor="let entry of propsArray" (click)="select(entry.title)">
-        {{entry.title}}
-    </button>
+<div class="mypanel-button-group">
+    <span>
+        <button class="btn btn-sm" [ngClass]="{'btn-selected': entry.title === selected}" style="margin-left: 10px"
+                *ngFor="let entry of propsArray"
+                (click)="select(entry.title)">
+            {{entry.title}}
+        </button>
+    </span>
 </div>
+
 <div *ngFor="let entry of propsArray">
     <div *ngIf="entry.title === selected">
-        <div class="panel">
-            <div class="panel-body">
-                {{entry.title}}
-            </div>
+
+        <div class="panel" >
+            <table class="table table-striped">
+                <tr *ngFor="let kvp of entry.values">
+                    <td *ngIf="kvp.key !== 'title'">
+                        <label>{{unCamel(kvp.key)}}</label>
+                    </td>
+                    <td *ngIf="kvp.key !== 'title'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                    <td *ngIf="kvp.key !== 'title'">
+                        <input [(ngModel)]="kvp.value">
+                    </td>
+                </tr>
+
+            </table>
         </div>
+        <button class="btn btn-sm btn-success" (click)="save()">Save</button>
     </div>
 </div>
 
