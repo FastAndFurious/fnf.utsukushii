@@ -6,9 +6,12 @@ server:
   port: 8092
 
 utsukushii:
+  id: SingleParamSet # used to retrieve from mongo
   name: Team-0
   accessCode: dogornose
   rabbitUrl: ${FNF_SERVER}
+  mongoUrl: localhost
+  mongoDb: utsukushii
 
   constantPowerProperties:
     teamId: Utsukushii
@@ -29,3 +32,6 @@ utsukushii:
 
   loggingReceiverProperties:
     publishEveryAfter: 5000
+
+  replayProperties:
+    frequency: 50

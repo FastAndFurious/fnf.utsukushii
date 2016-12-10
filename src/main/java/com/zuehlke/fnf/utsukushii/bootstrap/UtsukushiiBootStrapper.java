@@ -3,6 +3,7 @@ package com.zuehlke.fnf.utsukushii.bootstrap;
 import com.zuehlke.carrera.javapilot.services.PilotToRelayConnection;
 import com.zuehlke.fnf.actorbus.ActorBus;
 import com.zuehlke.fnf.connect.PilotToRelayConnectionFactory;
+import com.zuehlke.fnf.mongo.MongoParamStore;
 import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 import com.zuehlke.fnf.utsukushii.constantpower.ConstantPowerActor;
 import com.zuehlke.fnf.utsukushii.model.TrackModelActor;
@@ -13,6 +14,7 @@ import com.zuehlke.fnf.utsukushii.replay.ReplayActor;
 import com.zuehlke.fnf.utsukushii.strategy.StrategyGatewayActor;
 import com.zuehlke.fnf.utsukushii.web.WebSocketPublisherActor;
 import com.zuehlke.fnf.utsukushii.web.WebSocketHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 @Component
+@Slf4j
 public class UtsukushiiBootStrapper {
 
     private final ActorBus bus;
@@ -29,16 +32,18 @@ public class UtsukushiiBootStrapper {
     private final WebSocketHandler logReportHandler;
     private final WebSocketHandler usageStatsHandler;
     private PilotToRelayConnection connection;
-    private UtsukushiiProperties props;
+    private UtsukushiiProperties defaultProps;
+    private MongoParamStore mongoParamStore;
 
     @Autowired
     public UtsukushiiBootStrapper(ActorBus bus, PilotToRelayConnectionFactory connectionFactory,
-                                  UtsukushiiProperties props,
+                                  UtsukushiiProperties props, MongoParamStore mongoParamStore,
                                   @Qualifier("logReportHandler") WebSocketHandler logReportHandler,
                                   @Qualifier("replayStatusHandler") WebSocketHandler replayStatusHandler,
                                   @Qualifier("usageStatsHandler") WebSocketHandler usageStatsHandler ) {
-        this.props = props;
+        this.defaultProps = props;
         this.bus = bus;
+        this.mongoParamStore = mongoParamStore;
         this.connectionFactory = connectionFactory;
         this.replayStatusHandler = replayStatusHandler;
         this.logReportHandler = logReportHandler;
@@ -47,6 +52,8 @@ public class UtsukushiiBootStrapper {
 
     @PostConstruct
     private void bootstrap() {
+
+        UtsukushiiProperties props = determineProperties ();
 
         connection = connectionFactory.create(
                 bus::publish, bus::publish, bus::publish, bus::publish, bus::publish, bus::publish);
@@ -79,6 +86,18 @@ public class UtsukushiiBootStrapper {
 
         bus.register("ProbingActor", ProbingActor.props(),
                 ProbingActor.subscriptions);
+    }
+
+    private UtsukushiiProperties determineProperties() {
+        UtsukushiiProperties props = mongoParamStore.retrieve(defaultProps.getId());
+        if ( props == null ) {
+            log.warn("No property set in DB. Storing default properties");
+            mongoParamStore.store(defaultProps);
+            props = defaultProps;
+        } else {
+            log.info("Using properties from db {} at {}", defaultProps.getMongoDb(), defaultProps.getMongoUrl());
+        }
+        return props;
     }
 
 

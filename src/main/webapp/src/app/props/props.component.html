@@ -1,7 +1,8 @@
 <h1>Parameters</h1>
 
-
-<div class="mypanel-button-group">
+<div class="row">
+    <div class="col-md-6">
+        <div class="mypanel-button-group">
     <span>
         <button class="btn btn-sm" [ngClass]="{'btn-selected': entry.title === selected}" style="margin-left: 10px"
                 *ngFor="let entry of propsArray"
@@ -9,31 +10,33 @@
             {{entry.title}}
         </button>
     </span>
-</div>
-
-<div *ngFor="let entry of propsArray">
-    <div *ngIf="entry.title === selected">
-
-        <div class="panel" >
-            <table class="table table-striped">
-                <tr *ngFor="let kvp of entry.values">
-                    <td *ngIf="kvp.key !== 'title'">
-                        <label>{{unCamel(kvp.key)}}</label>
-                    </td>
-                    <td *ngIf="kvp.key !== 'title'">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    <td *ngIf="kvp.key !== 'title'">
-                        <input [(ngModel)]="kvp.value">
-                    </td>
-                </tr>
-
-            </table>
         </div>
-        <button class="btn btn-sm btn-success" (click)="save()">Save</button>
+
+        <div *ngFor="let entry of propsArray">
+            <div *ngIf="entry.title === selected">
+
+                <div class="panel">
+                    <table class="table table-striped">
+                        <tr *ngFor="let kvp of entry.values">
+                            <td *ngIf="kvp.display">
+                                <label class="param-label">{{unCamel(kvp.key)}}</label>
+                            </td>
+                            <td *ngIf="kvp.display">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                            <td *ngIf="kvp.display">
+                                <input [(ngModel)]="kvp.value" style="width:300px;">
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                <button class="btn btn-sm btn-success" (click)="save()">Save</button>
+            </div>
+        </div>
     </div>
 </div>
 
 
-<!-- Doesn't work. Getting some error in primeng component code
+<!-- Doesn't work. Getting some error in primeng component code related to the dynamic nature of the content
 <p-tabView>
     <p-tabPanel [header]="entry.title" *ngFor="let entry of propsArray">{{entry.title}}</p-tabPanel>
 </p-tabView>
