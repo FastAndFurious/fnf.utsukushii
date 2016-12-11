@@ -17,24 +17,27 @@ public class TrackSectionStartDetectorTest {
 
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, 300));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, -500));
-        Assert.assertEquals(TrackSectionType.STRAIGHT, detector.putAndDetect(i+=50, 200).get());
+        Assert.assertEquals(TrackSectionType.STRAIGHT, detector.putAndDetect(i+=50, 200).orElseThrow(this::shouldBeThere).getType());
 
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, 1110));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, 2000));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, 2200));
-        Assert.assertEquals(TrackSectionType.RIGHT_CURVE, detector.putAndDetect(i+50, 1600).get());
+        Assert.assertEquals(TrackSectionType.RIGHT_CURVE, detector.putAndDetect(i+50, 1600).orElseThrow(this::shouldBeThere).getType());
 
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, 900));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, 600));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, -600));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, -1300));
         Assert.assertEquals(Optional.empty(), detector.putAndDetect(i+=50, -1400));
-        Assert.assertEquals(TrackSectionType.LEFT_CURVE, detector.putAndDetect(i++, -1100).get());
+        Assert.assertEquals(TrackSectionType.LEFT_CURVE, detector.putAndDetect(i, -1100).orElseThrow(this::shouldBeThere).getType());
 
     }
 
+    private AssertionError shouldBeThere () {
+        return new AssertionError("");
+    }
 
-    int [][]data = new int[][]{
+    private int [][]data = new int[][]{
         new int[] { 49247,                                       -3540},
         new int[] { 49273,                                -4763},
         new int[] { 49293,                         -5885},
@@ -64,7 +67,6 @@ public class TrackSectionStartDetectorTest {
 
         // smoothing with a length of 4, threshold 100 and -100, and 3 subsequent values to trigger a section
         TrackSectionStartDetector detector = new TrackSectionStartDetector(3, 1000, -1000, 3, 30.0, 2.0 );
-        int i = 0;
         for ( int[] d: data ) {
             detector.putAndDetect(d[0], d[1]).ifPresent(System.out::println);
         }
