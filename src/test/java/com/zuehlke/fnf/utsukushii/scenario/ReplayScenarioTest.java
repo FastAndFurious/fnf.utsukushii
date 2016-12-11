@@ -45,6 +45,7 @@ public class ReplayScenarioTest {
     @Autowired
     private ActorBus bus;
 
+
     private ActorRef spy;
 
     @Before
