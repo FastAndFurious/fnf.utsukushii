@@ -1,6 +1,7 @@
 package com.zuehlke.fnf.utsukushii.props;
 
 import com.zuehlke.fnf.actorbus.ActorBus;
+import com.zuehlke.fnf.mongo.DocumentStore;
 import com.zuehlke.fnf.mongo.MongoParamStore;
 import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PropsRestResource {
 
     @Autowired
-    private MongoParamStore mongoParamStore;
+    private DocumentStore<UtsukushiiProperties> mongoParamStore;
 
     @Autowired
     private UtsukushiiProperties defaultProps;

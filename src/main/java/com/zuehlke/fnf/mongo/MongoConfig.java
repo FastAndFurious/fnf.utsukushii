@@ -15,7 +15,7 @@ public class MongoConfig {
     private UtsukushiiProperties props;
 
     @Bean
-    public MongoParamStore documentStore() {
+    public DocumentStore<UtsukushiiProperties> documentStore() {
         return new MongoParamStore();
     }
 

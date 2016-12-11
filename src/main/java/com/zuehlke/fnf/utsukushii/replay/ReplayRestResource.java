@@ -49,6 +49,7 @@ public class ReplayRestResource {
 
         try {
             RaceData raceData = new ObjectMapper().readValue(resource.getInputStream(), RaceData.class);
+            actorBus.publish(new SetFrequencyCommand(command.getFrequency()));
             actorBus.publish(raceData);
             return new ResponseEntity<>(HttpStatus.OK);
 

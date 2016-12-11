@@ -23,6 +23,7 @@ public class UtsukushiiProperties extends DisplayableProperties {
     private String mongoDb;
     private String name;
     private String accessCode;
+    private boolean plotSensor;
     private ConstantPowerProperties constantPowerProperties;
     private TrackDetectionProperties trackDetectionProperties;
     private TrackModelActorProperties trackModelActorProperties;

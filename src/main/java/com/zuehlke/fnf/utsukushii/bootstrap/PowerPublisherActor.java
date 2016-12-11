@@ -24,6 +24,7 @@ class PowerPublisherActor extends ActorBusActor {
 
     @Override
     protected void onReceive2(Object message) throws Exception {
+        if ( connection == null ) return;
         if ( message instanceof PowerControl ) {
             connection.send((PowerControl) message);
         }

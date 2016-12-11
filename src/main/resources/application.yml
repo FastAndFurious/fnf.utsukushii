@@ -12,6 +12,7 @@ utsukushii:
   rabbitUrl: ${FNF_SERVER}
   mongoUrl: localhost
   mongoDb: utsukushii
+  plotSensor: true
 
   constantPowerProperties:
     teamId: Utsukushii

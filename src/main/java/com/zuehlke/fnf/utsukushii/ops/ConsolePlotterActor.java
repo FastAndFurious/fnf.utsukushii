@@ -5,6 +5,7 @@ import com.zuehlke.carrera.relayapi.messages.SensorEvent;
 import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
 import com.zuehlke.fnf.actorbus.ActorBusActor;
 import com.zuehlke.fnf.actorbus.Subscriptions;
+import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 import com.zuehlke.fnf.utsukushii.model.TrackSectionType;
 import org.apache.commons.lang.StringUtils;
 
@@ -13,14 +14,16 @@ import java.io.PrintStream;
 public class ConsolePlotterActor extends ActorBusActor {
 
     private PrintStream out = System.out;
+    private UtsukushiiProperties properties;
     private long startTime;
 
-    private ConsolePlotterActor() {
+    private ConsolePlotterActor(UtsukushiiProperties properties) {
         super("ConsolePlotterActor");
+        this.properties = properties;
     }
 
-    public static Props props () {
-        return Props.create ( ConsolePlotterActor.class, ConsolePlotterActor::new);
+    public static Props props (UtsukushiiProperties properties) {
+        return Props.create ( ConsolePlotterActor.class, ()->new ConsolePlotterActor(properties));
     }
 
     public static Subscriptions subscriptions = Subscriptions
@@ -48,6 +51,7 @@ public class ConsolePlotterActor extends ActorBusActor {
     }
 
     private void handleVelocityMessage(VelocityMessage velocityMessage) {
+        if ( !properties.isPlotSensor()) return;
         out.println (String.format("Velocity : %3.0f", velocityMessage.getVelocity()));
     }
 
@@ -57,6 +61,7 @@ public class ConsolePlotterActor extends ActorBusActor {
 
     private void plotGyroZ ( SensorEvent event ) {
 
+        if ( !properties.isPlotSensor()) return;
         int t;
         if ( event.getT() == 0 ) {
             if ( startTime == 0 ) startTime = event.getTimeStamp();

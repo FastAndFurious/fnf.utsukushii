@@ -16,6 +16,7 @@ public class ReplayActor extends ActorBusActor{
 
     public static final Subscriptions subscriptions = Subscriptions
             .forClass(RaceData.class)
+            .andForClass(SetFrequencyCommand.class)
             .andForClass(SuspendReplayCommand.class)
             .andForClass(ResumeReplayCommand.class)
             .andForClass(StopReplayCommand.class)

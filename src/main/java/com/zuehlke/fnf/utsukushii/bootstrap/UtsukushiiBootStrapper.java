@@ -3,7 +3,7 @@ package com.zuehlke.fnf.utsukushii.bootstrap;
 import com.zuehlke.carrera.javapilot.services.PilotToRelayConnection;
 import com.zuehlke.fnf.actorbus.ActorBus;
 import com.zuehlke.fnf.connect.PilotToRelayConnectionFactory;
-import com.zuehlke.fnf.mongo.MongoParamStore;
+import com.zuehlke.fnf.mongo.DocumentStore;
 import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 import com.zuehlke.fnf.utsukushii.constantpower.ConstantPowerActor;
 import com.zuehlke.fnf.utsukushii.model.TrackModelActor;
@@ -33,17 +33,17 @@ public class UtsukushiiBootStrapper {
     private final WebSocketHandler usageStatsHandler;
     private PilotToRelayConnection connection;
     private UtsukushiiProperties defaultProps;
-    private MongoParamStore mongoParamStore;
+    private DocumentStore<UtsukushiiProperties> paramStore;
 
     @Autowired
     public UtsukushiiBootStrapper(ActorBus bus, PilotToRelayConnectionFactory connectionFactory,
-                                  UtsukushiiProperties props, MongoParamStore mongoParamStore,
+                                  UtsukushiiProperties props, DocumentStore<UtsukushiiProperties> paramStore,
                                   @Qualifier("logReportHandler") WebSocketHandler logReportHandler,
                                   @Qualifier("replayStatusHandler") WebSocketHandler replayStatusHandler,
                                   @Qualifier("usageStatsHandler") WebSocketHandler usageStatsHandler ) {
         this.defaultProps = props;
         this.bus = bus;
-        this.mongoParamStore = mongoParamStore;
+        this.paramStore = paramStore;
         this.connectionFactory = connectionFactory;
         this.replayStatusHandler = replayStatusHandler;
         this.logReportHandler = logReportHandler;
@@ -70,7 +70,7 @@ public class UtsukushiiBootStrapper {
         bus.register("ReplayActor", ReplayActor.props(),
                 ReplayActor.subscriptions);
 
-        bus.register("ConsolePlotterActor", ConsolePlotterActor.props(),
+        bus.register("ConsolePlotterActor", ConsolePlotterActor.props(props),
                 ConsolePlotterActor.subscriptions);
 
         TrackSectionStartDetector detector = new TrackSectionStartDetector(props.getTrackDetectionProperties());
@@ -89,10 +89,10 @@ public class UtsukushiiBootStrapper {
     }
 
     private UtsukushiiProperties determineProperties() {
-        UtsukushiiProperties props = mongoParamStore.retrieve(defaultProps.getId());
+        UtsukushiiProperties props = paramStore.retrieve(defaultProps.getId());
         if ( props == null ) {
             log.warn("No property set in DB. Storing default properties");
-            mongoParamStore.store(defaultProps);
+            paramStore.store(defaultProps);
             props = defaultProps;
         } else {
             log.info("Using properties from db {} at {}", defaultProps.getMongoDb(), defaultProps.getMongoUrl());
