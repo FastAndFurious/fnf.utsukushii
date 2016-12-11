@@ -44,13 +44,13 @@ public class TrackSectionDetectorActor extends ActorBusActor {
             currentSample.add(event);
         }
         detector.putAndDetect(t, event.getG()[2])
-                .ifPresent((sectionType) -> {
+                .ifPresent((sectionStart) -> {
                     if ( currentSample != null ) {
                         currentSample.finalizeSection();
                         publish(currentSample);
                     }
-                    currentSample = new TrackSectionSample(sectionType);
-                    publish(sectionType);
+                    currentSample = new TrackSectionSample(sectionStart.getType());
+                    publish(sectionStart);
                 });
     }
 

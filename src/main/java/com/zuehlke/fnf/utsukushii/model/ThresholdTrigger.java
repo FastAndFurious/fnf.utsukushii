@@ -1,10 +1,12 @@
 package com.zuehlke.fnf.utsukushii.model;
 
+import com.zuehlke.fnf.util.ValueAndGradient;
+
 import java.util.Optional;
 
 /**
  * recognizes curves by subsequent exceeding of the given threshold.
- * WARNING: NOT THREAD-SAFE
+ * WARNING: NOT THREAD-SAFE. Use only within an actor context
  */
 class ThresholdTrigger {
 
@@ -29,7 +31,7 @@ class ThresholdTrigger {
     }
 
 
-    Optional<TrackSectionType> putAndDetect ( double value, double gradient ) {
+    Optional<TrackSectionStart> putAndDetect ( double value, double gradient, long timestamp ) {
 
         if ( currentSection != TrackSectionType.RIGHT_CURVE ) {
             if ( value > upperStraightBoundary ) {
@@ -39,7 +41,7 @@ class ThresholdTrigger {
                 currentSection = TrackSectionType.RIGHT_CURVE;
                 below = 0;
                 middle = 0;
-                return Optional.of(currentSection);
+                return Optional.of(new TrackSectionStart(currentSection, new ValueAndGradient(value, gradient), timestamp));
             }
         }
 
@@ -51,7 +53,7 @@ class ThresholdTrigger {
                 currentSection = TrackSectionType.LEFT_CURVE;
                 above = 0;
                 middle = 0;
-                return Optional.of(currentSection);
+                return Optional.of(new TrackSectionStart(currentSection, new ValueAndGradient(value, gradient), timestamp));
             }
         }
 
@@ -69,7 +71,7 @@ class ThresholdTrigger {
                 currentSection = TrackSectionType.STRAIGHT;
                 below = 0;
                 above = 0;
-                return Optional.of(currentSection);
+                return Optional.of(new TrackSectionStart(currentSection, new ValueAndGradient(value, gradient), timestamp));
             }
         }
         return Optional.empty();

@@ -6,7 +6,10 @@ import java.util.Optional;
 
 /**
  * Detects a section start from a continuous stream of gyro z values
- * WARNING NOT THREAD-SAFE!
+ * Concept: a linreg filter provides current smoothed value and gradient. Those two values are then fed into a trigger
+ * that decides whether the current values indicate entry into a new track section
+ *
+ * WARNING: NOT THREAD-SAFE! For use within an actor only!
  */
 public class TrackSectionStartDetector {
 
@@ -26,9 +29,9 @@ public class TrackSectionStartDetector {
     }
 
 
-    Optional<TrackSectionType> putAndDetect(int t, int gyrz ) {
+    Optional<TrackSectionStart> putAndDetect(int t, int gyrz ) {
 
         filter.put(t, gyrz);
-        return filter.current().map((v)->trigger.putAndDetect(v.getValue(), v.getGradient())).orElse(Optional.empty());
+        return filter.current().map((v)->trigger.putAndDetect(v.getValue(), v.getGradient(), t)).orElse(Optional.empty());
     }
 }

@@ -6,6 +6,7 @@ import com.zuehlke.carrera.relayapi.messages.VelocityMessage;
 import com.zuehlke.fnf.actorbus.ActorBusActor;
 import com.zuehlke.fnf.actorbus.Subscriptions;
 import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
+import com.zuehlke.fnf.utsukushii.model.TrackSectionStart;
 import com.zuehlke.fnf.utsukushii.model.TrackSectionType;
 import org.apache.commons.lang.StringUtils;
 
@@ -29,7 +30,7 @@ public class ConsolePlotterActor extends ActorBusActor {
     public static Subscriptions subscriptions = Subscriptions
             .forClass(VelocityMessage.class)
             .andForClass(SensorEvent.class)
-            .andForClass(TrackSectionType.class);
+            .andForClass(TrackSectionStart.class);
 
 
     @Override
@@ -41,13 +42,13 @@ public class ConsolePlotterActor extends ActorBusActor {
         } else if ( message instanceof VelocityMessage ) {
             handleVelocityMessage ( (VelocityMessage) message );
 
-        } else if ( message instanceof TrackSectionType ) {
-            handleTrackSectionType ( (TrackSectionType) message );
+        } else if ( message instanceof TrackSectionStart) {
+            handleTrackSectionType ( (TrackSectionStart) message );
         }
     }
 
-    private void handleTrackSectionType ( TrackSectionType sectionType ) {
-        out.println ( "New section: " + sectionType.toString());
+    private void handleTrackSectionType ( TrackSectionStart sectionStart ) {
+        out.println ( "New section: " + sectionStart.toString());
     }
 
     private void handleVelocityMessage(VelocityMessage velocityMessage) {
