@@ -24,11 +24,11 @@ public class TrackModelActor extends ActorBusActor {
     private TrackModel trackModel;
     private Status status = Status.WAITING_FOR_STRAIGHT;
     private TrackModelActorProperties properties;
-    List<TrackSectionSample> history = new ArrayList<>();
-    List<TrackSectionType> majorCurves = new ArrayList<>();
+    private List<TrackSectionSample> history = new ArrayList<>();
+    private List<TrackSectionType> majorCurves = new ArrayList<>();
 
 
-    public TrackModelActor(TrackModelActorProperties properties) {
+    private TrackModelActor(TrackModelActorProperties properties) {
         super("TrackModelActor");
         this.properties = properties;
     }

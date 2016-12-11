@@ -6,7 +6,7 @@ import java.util.Optional;
  * recognizes curves by subsequent exceeding of the given threshold.
  * WARNING: NOT THREAD-SAFE
  */
-public class ThresholdTrigger {
+class ThresholdTrigger {
 
 
     private final int upperStraightBoundary;
@@ -19,7 +19,7 @@ public class ThresholdTrigger {
     private int middle;
     private TrackSectionType currentSection = null;
 
-    public ThresholdTrigger(int upperStraightBoundary, int lowerStraightBoundary, int triggerSize,
+    ThresholdTrigger(int upperStraightBoundary, int lowerStraightBoundary, int triggerSize,
                             double gradientThreshold, double kickFactor  ) {
         this.upperStraightBoundary = upperStraightBoundary;
         this.lowerStraightBoundary = lowerStraightBoundary;
@@ -29,7 +29,7 @@ public class ThresholdTrigger {
     }
 
 
-    public Optional<TrackSectionType> putAndDetect ( double value, double gradient ) {
+    Optional<TrackSectionType> putAndDetect ( double value, double gradient ) {
 
         if ( currentSection != TrackSectionType.RIGHT_CURVE ) {
             if ( value > upperStraightBoundary ) {
@@ -57,7 +57,7 @@ public class ThresholdTrigger {
 
         if ( currentSection != TrackSectionType.STRAIGHT ) {
             if ( value <= upperStraightBoundary && value >= lowerStraightBoundary) {
-                /**
+                /*
                  * taking into account that a large gradient may indicate an L-R or R-L change, during which the
                  * lower gyro-z absolute values do not actually indicate a straight.
                  */
@@ -75,53 +75,4 @@ public class ThresholdTrigger {
         return Optional.empty();
     }
 
-
-    public Optional<TrackSectionType> putAndDetect2 ( double value, double gradient ) {
-
-        if ( value > upperStraightBoundary ) {
-            above++;
-        } else if ( value < lowerStraightBoundary ) {
-            below++;
-        } else {
-            /**
-             * taking into account that a large gradient may indicate an L-R or R-L combination, where the lower gyro-z
-             * values during the change do not actually indicate a straight.
-             */
-            if ( Math.abs(gradient) < gradientThreshold ) {
-                middle++;
-            }
-        }
-
-        if ( above == triggerSize ) {
-            below = 0;
-            middle = 0;
-            currentSection = TrackSectionType.RIGHT_CURVE;
-            return Optional.of(currentSection);
-        }
-
-        if ( below == triggerSize ) {
-            above = 0;
-            middle = 0;
-            currentSection = TrackSectionType.LEFT_CURVE;
-            return Optional.of(currentSection);
-        }
-
-        if ( middle == triggerSize ) {
-            above = 0;
-            below = 0;
-            /** special corner case: if after the entry into the straight the gradient goes beyond the threshold,
-             * a double section detection may occur */
-            if ( currentSection == TrackSectionType.STRAIGHT ) {
-                return Optional.empty();
-            }
-            currentSection = TrackSectionType.STRAIGHT;
-            return Optional.of(currentSection);
-        }
-
-        return Optional.empty();
-    }
-
-    public Optional<TrackSectionType> current () {
-        return Optional.ofNullable(currentSection);
-    }
 }

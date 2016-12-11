@@ -8,7 +8,7 @@ import {PropsComponent} from "./props/props.component";
 const appRoutes: Routes = [
     {
         path: '',
-        redirectTo: '/logreport',
+        redirectTo: '/props',
         pathMatch: 'full'
     },
     {

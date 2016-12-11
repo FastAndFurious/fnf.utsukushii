@@ -19,7 +19,7 @@ public class StrategyGatewayActor extends ActorBusActor {
         return Props.create ( StrategyGatewayActor.class, ()->new StrategyGatewayActor(properties));
     }
 
-    public StrategyGatewayActor(UtsukushiiProperties properties) {
+    private StrategyGatewayActor(UtsukushiiProperties properties) {
         super("StrategyGatewayActor");
         this.properties = properties;
     }

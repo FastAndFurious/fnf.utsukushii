@@ -11,7 +11,7 @@ public class RabbitPilotToRelayConnectionFactory implements PilotToRelayConnecti
     private final PilotApi pilotApi;
     private final UtsukushiiProperties settings;
 
-    public RabbitPilotToRelayConnectionFactory(PilotApi pilotApi, UtsukushiiProperties properties) {
+    RabbitPilotToRelayConnectionFactory(PilotApi pilotApi, UtsukushiiProperties properties) {
         this.pilotApi = pilotApi;
         this.settings = properties;
     }

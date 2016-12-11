@@ -14,7 +14,7 @@ public class TrackSectionSample {
     @Getter
     private final List<SensorEvent> sensorEvents = new ArrayList<>();
 
-    public TrackSectionSample(TrackSectionType type ) {
+    TrackSectionSample(TrackSectionType type ) {
         this.type = type;
     }
 
@@ -22,11 +22,11 @@ public class TrackSectionSample {
         sensorEvents.add(event);
     }
 
-    public void finalizeSection () {
+    void finalizeSection () {
         sensorEvents.sort((l,r)->(int)(r.getTimeStamp() + r.getTimeStamp() - l.getTimeStamp() - l.getTimeStamp()));
     }
 
-    public int lengthInMs () {
+    int lengthInMs () {
         int size = sensorEvents.size();
         if ( size <= 1 ) return 0;
         if ( sensorEvents.get(0).getTimeStamp() == 0 ) {
