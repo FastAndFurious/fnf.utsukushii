@@ -1,8 +1,16 @@
 <h1>Replay</h1>
-<div>
-        Play at Frequency: <input type="number" id="frequency" required [(ngModel)]="frequency">
+<div class="row padding10">
+    <div class="col-md-2">
+        <label for="frequency">Play at Frequency:</label> <input type="number" id="frequency" required [(ngModel)]="frequency">
         Hz
+    </div>
+    <div class="col-md-3">
+        <label for="break">Break at position:</label> <input type="number" id="break" required [(ngModel)]="breakPoint">
+        <button class="btn btn-sm btn-primary" (click)="addBreakPoint()">Add Breakpoint</button>
+    </div>
+    <div class="col-md-8"></div>
 </div>
+
 <div class="row">
     <div class="col-md-8">
         <table class="table">
@@ -20,6 +28,7 @@
                 <th></th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
             </thead>
             <tr *ngFor="let info of raceData">
@@ -33,19 +42,28 @@
                 <td>{{info.startTime}}</td>
                 <td>
                     <button class="btn btn-sm btn-success" (click)="start(info.fileName)"
-                            [disabled]="!canStart()">Start</button>
+                            [disabled]="!canStart()">Start
+                    </button>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-info" (click)="suspend()"
-                            [disabled]="!canSuspend(info.fileName)">Suspend</button>
+                            [disabled]="!canSuspend(info.fileName)">Suspend
+                    </button>
+                </td>
+                <td>
+                    <button class="btn btn-sm btn-info" (click)="step()"
+                            [disabled]="!canStep(info.fileName)">Step
+                    </button>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-info" (click)="resume()"
-                            [disabled]="!canResume(info.fileName)">Resume</button>
+                            [disabled]="!canResume(info.fileName)">Resume
+                    </button>
                 </td>
                 <td>
                     <button class="btn btn-sm btn-warning" (click)="stop()"
-                            [disabled]="!canStop(info.fileName)">Stop</button>
+                            [disabled]="!canStop(info.fileName)">Stop
+                    </button>
                 </td>
             </tr>
         </table>

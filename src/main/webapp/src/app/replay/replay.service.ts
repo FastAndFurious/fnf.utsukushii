@@ -5,6 +5,8 @@ import {Subject, Observable} from "rxjs";
 import {ReplayCommand} from "./ReplayCommand";
 import {ReplayStatus} from "./ReplayStatus";
 import {ReplayStatusWebSocketService} from "../websocket/replaystatus-websocket.service";
+import {StepForwardCommand} from "./StepForwardCommand";
+import {AddBreakPointCommand} from "./AddBreakPointCommand";
 
 @Injectable ()
 export class ReplayService {
@@ -45,7 +47,16 @@ export class ReplayService {
         return this.http.post("api/replay/stop", null );
     }
 
+    step  (cmd: StepForwardCommand ) : Observable<Response> {
+        return this.http.post("api/replay/step", cmd );
+    }
+
+    addBreakPoint(breakPoint: number) : Observable<Response> {
+        return this.http.post("api/replay/breakpoint", new AddBreakPointCommand(breakPoint));
+    }
+
     closeWebsocket() {
         this.websocketService.close(true);
     }
+
 }

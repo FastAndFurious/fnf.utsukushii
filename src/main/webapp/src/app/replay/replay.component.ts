@@ -3,6 +3,7 @@ import {RaceDataFileInfo} from "./RaceDataFileInfo_";
 import {ReplayService} from "./replay.service";
 import {ReplayCommand} from "./ReplayCommand";
 import {ReplayStatus} from "./ReplayStatus";
+import {StepForwardCommand} from "./StepForwardCommand";
 
 @Component({
     selector: "replay",
@@ -13,6 +14,7 @@ export class ReplayComponent implements OnInit, OnDestroy {
 
     private raceData : RaceDataFileInfo[];
     private frequency = 50.0;
+    private breakPoint: number;
     private status: ReplayStatus = new ReplayStatus();
 
     constructor ( private replayService: ReplayService ) {
@@ -49,6 +51,15 @@ export class ReplayComponent implements OnInit, OnDestroy {
         this.replayService.stop().subscribe(()=>{}, (e)=>console.log(e), ()=>{});
     }
 
+    step () {
+        console.log("stepping...");
+        this.replayService.step(new StepForwardCommand("Steps", 0, 1)).subscribe(()=>{}, (e)=>console.log(e), ()=>{});
+    }
+
+    addBreakPoint () {
+        this.replayService.addBreakPoint ( this.breakPoint).subscribe(()=>{}, (e)=>console.log(e), ()=>{});
+    }
+
     ngOnInit(): void {
         this.replayService.listAll().subscribe((list)=>{
             this.raceData = list;
@@ -61,19 +72,23 @@ export class ReplayComponent implements OnInit, OnDestroy {
         this.replayService.closeWebsocket();
     }
 
-    canStart () {
+    canStart () : boolean {
         return this.status.status === "OFF";
     }
 
-    canSuspend ( file: string ) {
+    canSuspend ( file: string ) : boolean {
         return this.status.status === "PLAYING" && this.status.fileName === file;
     }
 
-    canResume ( file: string ) {
+    canResume ( file: string ) : boolean {
         return this.status.status === "SUSPENDED" && this.status.fileName === file;
     }
 
-    canStop ( file: string ) {
+    canStep ( file: string ) : boolean {
+        return this.canResume( file);
+    }
+
+    canStop ( file: string ) : boolean {
         return this.status.status !== "OFF" && this.status.fileName === file;
     }
 

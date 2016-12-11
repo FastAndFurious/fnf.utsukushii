@@ -58,7 +58,6 @@ public class ReplayRestResource {
             log.warn(message);
             return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
         }
-
     }
 
     @RequestMapping(value="/replay/stop", method = RequestMethod.POST, produces = "application/json")
@@ -82,6 +81,22 @@ public class ReplayRestResource {
 
         log.info("Received Request to resume current replay.");
         actorBus.publish(new ResumeReplayCommand());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/replay/step", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> step ( @RequestBody StepForwardCommand command ) {
+
+        log.debug("Received Request to forward a single step.");
+        actorBus.publish(command );
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @RequestMapping(value="/replay/breakpoint", method = RequestMethod.POST, produces = "application/json")
+    public ResponseEntity<?> addBreakPoint ( @RequestBody AddBreakPointCommand command ) {
+
+        log.info("Received Request to add breakpoint at {}.", command.getBreakAt());
+        actorBus.publish(command );
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

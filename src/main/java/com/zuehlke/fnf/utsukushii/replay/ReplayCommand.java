@@ -7,4 +7,5 @@ public class ReplayCommand {
 
     private String fileName;
     private float frequency;
+    private long runUntil;
 }

@@ -12,15 +12,20 @@ import com.zuehlke.fnf.actorbus.logging.MessageCode;
 import com.zuehlke.fnf.utsukushii.ScheduleNames;
 import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ReplayActor extends ActorBusActor{
 
     public static final Subscriptions subscriptions = Subscriptions
             .forClass(RaceData.class)
             .andForClass(SetFrequencyCommand.class)
             .andForClass(SuspendReplayCommand.class)
+            .andForClass(StepForwardCommand.class)
             .andForClass(ResumeReplayCommand.class)
             .andForClass(StopReplayCommand.class)
-            .andForClass(UtsukushiiProperties.class);
+            .andForClass(UtsukushiiProperties.class)
+            .andForClass(AddBreakPointCommand.class);
 
     public static Props props () {
         return Props.create(ReplayActor.class, ReplayActor::new);
@@ -36,7 +41,7 @@ public class ReplayActor extends ActorBusActor{
     private float frequency = 50.0f;
     private RaceData data;
     private ReplayStatus.Status status = ReplayStatus.Status.OFF;
-    private UtsukushiiProperties properties;
+    private Set<Long> breakPoints = new HashSet<>();
 
     private ReplayActor() {
         super("ReplayActor");
@@ -52,11 +57,17 @@ public class ReplayActor extends ActorBusActor{
         } else if ( message instanceof SuspendReplayCommand ) {
             suspend();
 
+        } else if ( message instanceof StepForwardCommand ) {
+            stepForward( (StepForwardCommand) message);
+
         } else if ( message instanceof ResumeReplayCommand ) {
             resume();
 
         } else if ( message instanceof StopReplayCommand ) {
             stop();
+
+        } else if ( message instanceof AddBreakPointCommand ) {
+            addBreakPoint( (AddBreakPointCommand) message );
 
         } else if ( message instanceof SetFrequencyCommand ) {
             handleFrequencyUpdate(((SetFrequencyCommand)message).getFrequency());
@@ -72,6 +83,11 @@ public class ReplayActor extends ActorBusActor{
             handlePropertiesUpdate ( (UtsukushiiProperties) message );
         }
     }
+
+    private void addBreakPoint(AddBreakPointCommand cmd) {
+        breakPoints.add(cmd.getBreakAt());
+    }
+
 
     private void handlePropertiesUpdate(UtsukushiiProperties properties) {
         handleFrequencyUpdate(properties.getReplayProperties().getFrequency());
@@ -125,6 +141,14 @@ public class ReplayActor extends ActorBusActor{
         setNewStatusUpdateFrequency( STATUS_UPDATE_FREQUENCY_WHEN_IDLE );
     }
 
+    private void stepForward ( StepForwardCommand cmd ) {
+        if ( cmd.getType() == StepForwardCommand.Type.Steps ) {
+            for (int i = 0; i < cmd.getNumSteps(); i++ ) {
+                getSelf().tell(new ScheduledTask(false, 0, ScheduleNames.REPLAY), getSelf());
+            }
+        }
+    }
+
     private void resume () {
 
         if ( data != null ) {
@@ -154,6 +178,7 @@ public class ReplayActor extends ActorBusActor{
         }
 
         if ( index < vs + ss ) {
+
             index ++;
 
             VelocityMessage currentVelocity;
@@ -161,7 +186,9 @@ public class ReplayActor extends ActorBusActor{
                 currentVelocity = data.getVelocityMessages().get(vi);
             } else {
                 if ( si < ss ) {
-                    publish(data.getSensorEvents().get(si++));
+                    SensorEvent event = data.getSensorEvents().get(si++);
+                    publish(event);
+                    suspendIfBreakpoint ( event );
                 }
                 return;
             }
@@ -179,6 +206,7 @@ public class ReplayActor extends ActorBusActor{
 
             if ( currentVelocity.getT() > currentEvent.getT()) {
                 publish(currentEvent);
+                suspendIfBreakpoint ( currentEvent );
                 si++;
             } else {
                 publish(currentVelocity);
@@ -189,6 +217,11 @@ public class ReplayActor extends ActorBusActor{
             publishStopMessage(data);
             cancelSchedule(ScheduleNames.REPLAY);
         }
+    }
+
+    private void suspendIfBreakpoint ( SensorEvent event ) {
+        breakPoints.stream().filter((t)->t==event.getT())
+                .findAny().ifPresent((t)->suspend());
     }
 
     private void publishStartMessage(RaceData data) {
