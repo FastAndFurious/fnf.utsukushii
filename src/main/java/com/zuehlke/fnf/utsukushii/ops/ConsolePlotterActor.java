@@ -53,7 +53,7 @@ public class ConsolePlotterActor extends ActorBusActor {
 
     private void handleVelocityMessage(VelocityMessage velocityMessage) {
         if ( !properties.isPlotSensor()) return;
-        out.println (String.format("Velocity : %3.0f", velocityMessage.getVelocity()));
+        out.println (String.format("At %d: Velocity : %3.0f", velocityMessage.getT(), velocityMessage.getVelocity()));
     }
 
     private void handleSensorEvent(SensorEvent event) {

@@ -30,6 +30,7 @@ utsukushii:
   trackModelActorProperties:
     minStraightLength: 160 # milliseconds
     minNumberOfCurves: 4 # expect at least four major curves
+    awaitSectionsBeforeRecognition: 6 # let 3 sections pass by before starting track recognitions
 
   loggingReceiverProperties:
     publishEveryAfter: 5000

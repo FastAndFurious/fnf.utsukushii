@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 public class TrackModelActorProperties extends DisplayableProperties {
 
+    private int awaitSectionsBeforeRecognition;
     private int minStraightLength;
     private int minNumberOfCurves;
 

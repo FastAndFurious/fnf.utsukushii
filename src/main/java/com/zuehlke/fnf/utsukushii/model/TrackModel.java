@@ -2,7 +2,11 @@ package com.zuehlke.fnf.utsukushii.model;
 
 import java.util.List;
 
-public class TrackModel {
+class TrackModel {
 
-    List<TrackSectionSample> sections;
+    List<TrackSectionExperience> experiences;
+
+    TrackModel(List<TrackSectionExperience> experiences) {
+        this.experiences = experiences;
+    }
 }

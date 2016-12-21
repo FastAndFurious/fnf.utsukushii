@@ -6,7 +6,7 @@ import com.zuehlke.fnf.connect.PilotToRelayConnectionFactory;
 import com.zuehlke.fnf.mongo.DocumentStore;
 import com.zuehlke.fnf.utsukushii.UtsukushiiProperties;
 import com.zuehlke.fnf.utsukushii.constantpower.ConstantPowerActor;
-import com.zuehlke.fnf.utsukushii.model.TrackModelActor;
+import com.zuehlke.fnf.utsukushii.model.TrackModelCreatorActor;
 import com.zuehlke.fnf.utsukushii.model.TrackSectionDetectorActor;
 import com.zuehlke.fnf.utsukushii.model.TrackSectionStartDetector;
 import com.zuehlke.fnf.utsukushii.ops.ConsolePlotterActor;
@@ -77,8 +77,8 @@ public class UtsukushiiBootStrapper {
         bus.register("TrackSectionDetectorActor", TrackSectionDetectorActor.props(detector),
                 TrackSectionDetectorActor.subscriptions);
 
-        bus.register("TrackModelActor", TrackModelActor.props(props.getTrackModelActorProperties()),
-                TrackModelActor.subscriptions);
+        bus.register("TrackModelActor", TrackModelCreatorActor.props(props.getTrackModelActorProperties()),
+                TrackModelCreatorActor.subscriptions);
 
         bus.register("WebsocketPublisherActor",
                 WebSocketPublisherActor.props(logReportHandler, replayStatusHandler, usageStatsHandler),
