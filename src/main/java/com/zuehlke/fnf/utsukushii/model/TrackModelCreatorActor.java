@@ -10,7 +10,6 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class TrackModelCreatorActor extends ActorBusActor {
 
@@ -20,7 +19,7 @@ public class TrackModelCreatorActor extends ActorBusActor {
         NEXT_STRAIGHT_TERMINATES, READY
     }
 
-    enum OpsState {
+    private enum OpsState {
         WARMING_UP, // just wait for the first track sections to pass by
         RECOGNITION, // try find a recurring pattern
         MAINTENANCE, // add more samples
@@ -96,15 +95,6 @@ public class TrackModelCreatorActor extends ActorBusActor {
         this.velocities.add(message);
     }
 
-    private Optional<Integer> findSectionAfter(long t) {
-        for (int i = 0; i < history.size(); i++) {
-            if (history.get(i).getSensorEvents().get(0).getT() > t) {
-                return Optional.of(i - 1);
-            }
-        }
-        return Optional.empty();
-    }
-
 
     private void collectSample(TrackSectionSample sample) {
 
@@ -115,20 +105,10 @@ public class TrackModelCreatorActor extends ActorBusActor {
                 status = Status.EXPECTING_CURVE;
 
             } else if ( status == Status.NEXT_STRAIGHT_TERMINATES ) { // found the track model!!
-                List<TrackSectionExperience> experiences = createExperienceList(majorCurves, history);
-                for ( TrackSectionExperience experience : experiences ) {
-                    for (TrackSectionSample s : experience.getSamples()) {
-                        findAndSetEntryAndExitFor(s, velocities);
-                    }
-                }
-                info(MessageCode.USAGE, "Found track model", getSender().path().name());
-                trackModel = new TrackModel( experiences );
+                createTrackModel();
                 opsState = OpsState.READY;
             }
-            return;
-        }
-
-        if (status == Status.EXPECTING_CURVE) {
+        } else if (status == Status.EXPECTING_CURVE) {
             if (sample.isCurve()) {
                 if (learnFromSample(history.size() - 1, sample)) {
                     status = Status.NEXT_STRAIGHT_TERMINATES;
@@ -137,16 +117,6 @@ public class TrackModelCreatorActor extends ActorBusActor {
                 }
             }
         }
-    }
-
-    private void addToHistory ( TrackSectionSample sample ) {
-        TrackSectionSample prev = null;
-        if (history.size() > 0 ) {
-            prev = history.get(history.size()-1);
-            prev.setNext ( sample );
-        }
-        sample.setPrevious ( prev );
-        history.add(sample);
     }
 
     /**
@@ -164,6 +134,27 @@ public class TrackModelCreatorActor extends ActorBusActor {
             }
         }
         return false;
+    }
+
+    private void createTrackModel ( ) {
+        info(MessageCode.USAGE, "Found track model", getSender().path().name());
+        List<TrackSectionExperience> experiences = createExperienceList(majorCurves, history);
+        for ( TrackSectionExperience experience : experiences ) {
+            for (TrackSectionSample s : experience.getSamples()) {
+                findAndSetEntryAndExitFor(s, velocities);
+            }
+        }
+        trackModel = new TrackModel( experiences );
+    }
+
+    private void addToHistory ( TrackSectionSample sample ) {
+        TrackSectionSample prev = null;
+        if (history.size() > 0 ) {
+            prev = history.get(history.size()-1);
+            prev.setNext ( sample );
+        }
+        sample.setPrevious ( prev );
+        history.add(sample);
     }
 
     /**
